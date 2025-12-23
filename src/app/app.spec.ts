@@ -60,7 +60,7 @@ describe('App', () => {
     expect(lockSpy).toHaveBeenCalled();
   });
 
-  it('should call security.lock() when Alt+Shift+L is pressed', async () => {
+  it('should call security.lock() when Ctrl+Shift+L is pressed', async () => {
     const fixture = TestBed.createComponent(App);
     const security = (fixture.componentInstance as any).security;
     vi.spyOn(security, 'hasPIN').mockReturnValue(true);
@@ -70,7 +70,8 @@ describe('App', () => {
 
     const event = new KeyboardEvent('keydown', {
       key: 'l',
-      altKey: true,
+      code: 'KeyL',
+      ctrlKey: true,
       shiftKey: true,
       bubbles: true
     });

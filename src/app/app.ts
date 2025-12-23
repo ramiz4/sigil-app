@@ -16,7 +16,8 @@ export class App {
 
   @HostListener('window:keydown', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent) {
-    if (event.altKey && event.shiftKey && (event.key === 'l' || event.key === 'L')) {
+    const isLKey = event.code === 'KeyL' || event.key?.toLowerCase() === 'l';
+    if (event.ctrlKey && event.shiftKey && isLKey) {
       if (this.security.hasPIN() && this.security.isUnlocked()) {
         event.preventDefault();
         this.security.lock();
