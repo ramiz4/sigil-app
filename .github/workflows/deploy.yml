@@ -33,16 +33,20 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Bump version
-        id: bump
+      - name: Create Tag
+        id: create_tag
         run: |
-          pnpm commit-and-tag-version --releaseCommitMessageFormat "chore(release): {{currentTag}} [skip ci]"
+          VERSION=$(node -p "require('./package.json').version")
+          TAG="v$VERSION"
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
           
-      - name: Push changes
-        env:
-          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN || secrets.GITHUB_TOKEN }}
-        run: |
-          git push --follow-tags origin main
+          # Check if tag exists
+          if git rev-parse "$TAG" >/dev/null 2>&1; then
+            echo "Tag $TAG already exists, skipping creation."
+          else
+            git tag $TAG
+            git push origin $TAG
+          fi
 
   build-and-deploy:
     needs: version
