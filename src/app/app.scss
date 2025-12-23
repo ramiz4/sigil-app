@@ -1,0 +1,62 @@
+.app-layout {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.app-header {
+    height: 60px;
+    background-color: var(--surface-color);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1rem;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    color: var(--text-main);
+    cursor: pointer;
+
+    .logo-icon {
+        color: var(--primary-color);
+    }
+
+    .title {
+        font-weight: 700;
+        font-size: 1.25rem;
+        letter-spacing: -0.02em;
+    }
+}
+
+.icon-btn {
+    color: var(--text-secondary);
+    padding: 0.5rem;
+    border-radius: var(--radius-md);
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+        background-color: var(--bg-color);
+        color: var(--text-main);
+    }
+}
+
+.content {
+    flex: 1;
+    max-width: 600px;
+    /* Constrain width for authenticator usage */
+    margin: 0 auto;
+    width: 100%;
+    padding: 1rem;
+    box-sizing: border-box;
+}

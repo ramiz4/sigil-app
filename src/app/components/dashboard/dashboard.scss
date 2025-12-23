@@ -1,0 +1,144 @@
+.dashboard-container {
+    padding-bottom: 80px;
+    /* Space for FAB */
+}
+
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 4rem 1rem;
+    color: var(--text-secondary);
+
+    .empty-icon {
+        color: var(--primary-color);
+        margin-bottom: 1.5rem;
+        opacity: 0.8;
+    }
+
+    h2 {
+        color: var(--text-main);
+        margin-bottom: 0.5rem;
+    }
+
+    p {
+        margin-bottom: 2rem;
+        max-width: 300px;
+    }
+}
+
+.codes-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+}
+
+.code-card {
+    background-color: var(--surface-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem;
+    position: relative;
+    transition: transform 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+    overflow: hidden;
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+        border-color: var(--primary-color);
+    }
+
+    &:active {
+        transform: scale(0.98);
+    }
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+}
+
+.account-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.issuer {
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--text-main);
+}
+
+.account-label {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-top: 0.125rem;
+}
+
+.actions {
+    .delete {
+        padding: 0.25rem;
+        opacity: 0.5;
+
+        &:hover {
+            opacity: 1;
+            color: var(--danger-color);
+        }
+    }
+}
+
+.code-value {
+    font-family: 'SF Mono', 'Roboto Mono', monospace;
+    font-size: 2.5rem;
+    font-weight: 500;
+    color: var(--primary-color);
+    letter-spacing: 0.2rem;
+    text-align: center;
+    margin: 0.5rem 0 1.5rem 0;
+}
+
+.progress-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background-color: var(--bg-color);
+}
+
+.progress-fill {
+    height: 100%;
+    background-color: var(--primary-color);
+    transition: width 1s linear;
+
+    &.danger {
+        background-color: var(--danger-color);
+    }
+}
+
+.fab {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background-color: var(--primary-color);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--shadow-md);
+    transition: transform 0.2s, background-color 0.2s;
+    z-index: 100;
+
+    &:hover {
+        background-color: var(--primary-hover);
+        transform: scale(1.05);
+    }
+}

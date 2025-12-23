@@ -1,0 +1,38 @@
+.settings-container {
+    padding-top: 1rem;
+}
+
+.header-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    .back-link {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--text-secondary);
+        text-decoration: none;
+        font-weight: 500;
+
+        &:hover {
+            color: var(--text-main);
+        }
+    }
+}
+
+.warning-card {
+    border-left: 4px solid var(--danger-color);
+
+    h3 {
+        margin: 0;
+    }
+
+    .text-danger {
+        color: var(--danger-color);
+    }
+}
+
+.text-center {
+    text-align: center;
+}

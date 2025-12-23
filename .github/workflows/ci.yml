@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Install Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20
+        
+    - uses: pnpm/action-setup@v3
+      with:
+        version: 8
+
+    - name: Install dependencies
+      run: pnpm install
+
+    - name: Build Web
+      run: pnpm build
+
+    - name: Test
+      # Attempt to run tests headlessly. Adjust based on available test runner.
+      # If using Karma/ChromeHeadless:
+      run: pnpm test -- --watch=false --browsers=ChromeHeadless
+      # If failing due to missing browser, we might need 'uses: browser-actions/setup-chrome@latest'

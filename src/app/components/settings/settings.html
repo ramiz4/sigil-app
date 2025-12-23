@@ -1,0 +1,44 @@
+<div class="settings-container container">
+    <div class="header-row mb-4">
+        <a routerLink="/" class="back-link">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+            Back
+        </a>
+        <h2>Settings</h2>
+    </div>
+
+    <div class="card">
+        <h3>Appearance</h3>
+        <div class="flex-row justify-between">
+            <span>Theme</span>
+            <button (click)="toggleTheme()" class="btn">Switch Mode</button>
+        </div>
+    </div>
+
+    <div class="card warning-card">
+        <div class="flex-row">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                class="text-danger">
+                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z">
+                </path>
+                <line x1="12" y1="9" x2="12" y2="13"></line>
+                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+            <h3>Security Notice</h3>
+        </div>
+        <p class="mt-4">
+            Sigil stores your 2FA secrets <strong>locally</strong> in your browser's secure database (IndexedDB).
+            They are never sent to any server.
+            Please ensure your device is protected with a password or biometric lock.
+        </p>
+    </div>
+
+    <div class="text-center text-muted mt-4 text-sm">
+        Sigil v0.1.0 MVP
+    </div>
+</div>

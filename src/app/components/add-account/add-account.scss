@@ -1,0 +1,140 @@
+.add-container {
+    padding-top: 1rem;
+}
+
+.header-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    .back-link {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--text-secondary);
+        text-decoration: none;
+        font-weight: 500;
+
+        &:hover {
+            color: var(--text-main);
+        }
+    }
+
+    h2 {
+        margin: 0;
+    }
+}
+
+.tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    overflow-x: auto;
+    padding-bottom: 0.25rem;
+
+    /* Hide scrollbar */
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
+}
+
+.tab {
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-md);
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--text-secondary);
+    cursor: pointer;
+    white-space: nowrap;
+    font-weight: 500;
+
+    &:hover {
+        background-color: var(--bg-color);
+    }
+
+    &.active {
+        background-color: var(--surface-color);
+        color: var(--primary-color);
+        border-color: var(--border-color);
+        box-shadow: var(--shadow-sm);
+    }
+}
+
+.tab-content {
+    min-height: 300px;
+}
+
+.scan-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+
+    .scanner-video {
+        width: 100%;
+        max-width: 400px;
+        height: auto;
+        background-color: #000;
+        border-radius: var(--radius-md);
+        margin-bottom: 1rem;
+    }
+
+    .error-msg {
+        color: var(--danger-color);
+        margin-bottom: 0.5rem;
+    }
+
+    .hint {
+        color: var(--text-secondary);
+    }
+}
+
+.manual-form {
+    .form-group {
+        margin-bottom: 1rem;
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+    }
+
+    .mono-input {
+        font-family: 'SF Mono', monospace;
+    }
+}
+
+.image-upload {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    text-align: center;
+
+    .upload-icon {
+        color: var(--text-secondary);
+        margin-bottom: 1rem;
+        opacity: 0.5;
+    }
+
+    p {
+        margin-bottom: 1.5rem;
+    }
+
+    .file-input-hidden {
+        display: none;
+    }
+}
+
+.paste-area {
+    textarea {
+        width: 100%;
+        font-family: monospace;
+        font-size: 0.9rem;
+    }
+}
