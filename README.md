@@ -57,5 +57,5 @@ pnpm tauri build
 - [x] PIN Lock on app startup
 - [x] Folder organization for accounts
 - [x] Add a Lock button to lock the app (pin)
-- [ ] Generate a new favicon and replace the default angular favicon
+- [x] Generate a new favicon and replace the default angular favicon
 - [ ] Add account -> Upload image via drag and drop
