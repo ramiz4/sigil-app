@@ -1,0 +1,15 @@
+# General Project Rules
+- Follow Conventional Commits for ALL commit messages.
+- Types: feat, fix, chore, docs, style, refactor, perf, test.
+- Use imperative mood: "add feature" instead of "added feature".
+- Breaking changes must use "feat!:" or "fix!:".
+
+# Tech Stack Guidelines
+- Angular 21+, Tauri v2, pnpm.
+- Use Tailwind CSS for styling.
+- Ensure all tests pass (`pnpm test`) before finalizing any implementation.
+
+# Git Workflow
+- Never push directly to `main`.
+- Always create a feature branch and a PR.
+- The build and deploy process is automated via GitHub Actions on merge to `main`.

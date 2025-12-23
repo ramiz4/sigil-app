@@ -10,10 +10,45 @@ permissions:
   id-token: write
 
 jobs:
-  build-and-deploy:
+  version:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          
+      - uses: pnpm/action-setup@v4
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Bump version
+        id: bump
+        run: |
+          pnpm commit-and-tag-version
+          
+      - name: Push changes
+        run: |
+          git push --follow-tags origin main
+
+  build-and-deploy:
+    needs: version
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
       
       - name: Install Node.js
         uses: actions/setup-node@v4
@@ -42,3 +77,54 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+  build-tauri:
+    needs: version
+    permissions:
+      contents: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: 'macos-latest'
+          - platform: 'ubuntu-22.04'
+          - platform: 'windows-latest'
+
+    runs-on: ${{ matrix.platform }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: install rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: install pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: install dependencies (ubuntu only)
+        if: matrix.platform == 'ubuntu-22.04'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev build-essential curl wget file libxdo-dev libssl-dev libayatana-appindicator3-dev librsvg2-dev
+
+      - name: install frontend dependencies
+        run: pnpm install
+
+      - uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tagName: v__VERSION__
+          releaseName: 'Sigil v__VERSION__'
+          releaseBody: 'See the assets to download the desktop version.'
+          releaseDraft: false
+          prerelease: false
+          args: ${{ matrix.platform == 'windows-latest' && '--target x86_64-pc-windows-msvc' || '' }}
+
+

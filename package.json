@@ -1,13 +1,15 @@
 {
   "name": "sigil",
-  "version": "0.0.0",
+  "version": "0.1.0",
+  "type": "module",
   "scripts": {
     "ng": "ng",
     "dev": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "tauri": "tauri"
+    "tauri": "tauri",
+    "prepare": "husky"
   },
   "prettier": {
     "printWidth": 100,
@@ -43,10 +45,14 @@
     "@angular/build": "^21.0.4",
     "@angular/cli": "^21.0.4",
     "@angular/compiler-cli": "^21.0.0",
+    "@commitlint/cli": "^20.2.0",
+    "@commitlint/config-conventional": "^20.2.0",
     "@tailwindcss/postcss": "^4.1.18",
     "@tauri-apps/cli": "^2.9.6",
     "@types/uuid": "^11.0.0",
     "@vitest/browser-playwright": "^4.0.16",
+    "commit-and-tag-version": "^12.6.1",
+    "husky": "^9.1.7",
     "jsdom": "^27.1.0",
     "playwright": "^1.57.0",
     "postcss": "^8.5.6",
