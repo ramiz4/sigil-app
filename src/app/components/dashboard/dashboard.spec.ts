@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Dashboard } from './dashboard';
 import { TotpService } from '../../services/totp.service';
+import { ToastService } from '../../services/toast.service';
 import { signal } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { By } from '@angular/platform-browser';
@@ -12,22 +13,30 @@ class MockTotpService {
   updateAccount(account: any) { }
 }
 
+class MockToastService {
+  success(message: string) { }
+  error(message: string) { }
+}
+
 describe('Dashboard', () => {
   let component: Dashboard;
   let fixture: ComponentFixture<Dashboard>;
+  let toastService: ToastService;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [Dashboard],
       providers: [
         provideRouter([]),
-        { provide: TotpService, useClass: MockTotpService }
+        { provide: TotpService, useClass: MockTotpService },
+        { provide: ToastService, useClass: MockToastService }
       ]
     })
       .compileComponents();
 
     fixture = TestBed.createComponent(Dashboard);
     component = fixture.componentInstance;
+    toastService = TestBed.inject(ToastService);
     fixture.detectChanges();
   });
 
@@ -78,11 +87,11 @@ describe('Dashboard', () => {
     expect(groups[1].name).toBe('Beta');
   });
 
-  it('should copy code to clipboard when item is clicked', async () => {
-    // Mock clipboard
+  it('should copy code to clipboard and show toast', async () => {
     const writeTextMock = vi.fn().mockResolvedValue(undefined);
     // @ts-ignore
     navigator.clipboard = { writeText: writeTextMock };
+    const toastSpy = vi.spyOn(toastService, 'success');
 
     const mockService = TestBed.inject(TotpService) as unknown as MockTotpService;
     mockService.displayCodes.set([
@@ -95,9 +104,9 @@ describe('Dashboard', () => {
 
     itemDiv.triggerEventHandler('click', null);
 
-    // We need to wait for the microtask queue since copyCode is async
     await Promise.resolve();
 
     expect(writeTextMock).toHaveBeenCalledWith('999999');
+    expect(toastSpy).toHaveBeenCalledWith('Code copied to clipboard');
   });
 });

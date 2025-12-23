@@ -3,11 +3,12 @@ import { RouterOutlet, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { SecurityService } from './services/security.service';
 import { LockComponent } from './components/lock/lock';
+import { ToastComponent } from './components/toast/toast';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, RouterLink, CommonModule, LockComponent],
+  imports: [RouterOutlet, RouterLink, CommonModule, LockComponent, ToastComponent],
   templateUrl: './app.html',
 })
 export class App {

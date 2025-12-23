@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common'; // Fallback
 import { RouterLink } from '@angular/router';
 import { TotpService, TotpDisplay } from '../../services/totp.service';
 import { Account } from '../../services/storage.service';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -11,6 +12,7 @@ import { Account } from '../../services/storage.service';
 })
 export class Dashboard {
   totp = inject(TotpService);
+  toast = inject(ToastService);
 
   codes = this.totp.displayCodes;
 
@@ -43,9 +45,10 @@ export class Dashboard {
   async copyCode(code: string) {
     try {
       await navigator.clipboard.writeText(code);
-      // TODO: Show toast
+      this.toast.success('Code copied to clipboard');
     } catch (err) {
       console.error('Failed to copy', err);
+      this.toast.error('Failed to copy to clipboard');
     }
   }
 
