@@ -19,6 +19,20 @@
         </div>
     </div>
 
+    <div class="card">
+        <h3>Data Management</h3>
+        <p class="text-sm text-muted mb-4">
+            Securely backup your accounts to an encrypted file.
+            <br>
+            <strong>Warning:</strong> If you lose your backup password, your data cannot be recovered.
+        </p>
+        <div class="flex-row gap-2">
+            <button (click)="exportBackup()" class="btn btn-primary">Export Backup</button>
+            <button (click)="triggerImport()" class="btn btn-outline">Import Restore</button>
+            <input type="file" id="backupInput" (change)="onFileSelected($event)" accept=".json" style="display: none;">
+        </div>
+    </div>
+
     <div class="card warning-card">
         <div class="flex-row">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"

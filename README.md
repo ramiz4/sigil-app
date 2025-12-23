@@ -53,7 +53,7 @@ pnpm tauri build
 - **Scanning**: `@zxing/browser` for QR code decoding.
 
 ## Roadmap
-- [ ] Encrypted Backup/Restore (JSON)
+- [x] Encrypted Backup/Restore (JSON)
 - [ ] PIN Lock on app startup
 - [ ] Folder organization for accounts
 - [ ] Mobile version (using Capacitor provided responsive design)
