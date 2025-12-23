@@ -1,16 +1,21 @@
-import { Component } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { BackupService } from '../../services/backup.service';
+import { SecurityService } from '../../services/security.service';
+import { LockComponent } from '../lock/lock';
 
 @Component({
   selector: 'app-settings',
-  imports: [CommonModule, RouterLink],
+  standalone: true,
+  imports: [CommonModule, RouterLink, LockComponent],
   templateUrl: './settings.html',
 })
 export class Settings {
+  private backupService = inject(BackupService);
+  public security = inject(SecurityService);
 
-  constructor(private backupService: BackupService) { }
+  showPINSetup = signal(false);
 
   toggleTheme() {
     const root = document.documentElement;
@@ -58,7 +63,17 @@ export class Settings {
     event.target.value = ''; // reset so same file can be selected again if needed
   }
 
-  ngOnInit() {
-    // Initialize state if needed, but usually done in app initialization
+  setupPIN() {
+    this.showPINSetup.set(true);
+  }
+
+  removePIN() {
+    if (confirm('Are you sure you want to remove the PIN lock?')) {
+      this.security.removePIN();
+    }
+  }
+
+  onPINSet() {
+    this.showPINSetup.set(false);
   }
 }
