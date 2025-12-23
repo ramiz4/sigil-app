@@ -31,5 +31,5 @@ jobs:
     - name: Test
       # Attempt to run tests headlessly. Adjust based on available test runner.
       # If using Karma/ChromeHeadless:
-      run: pnpm test --watch=false
+      run: pnpm test
       # If failing due to missing browser, we might need 'uses: browser-actions/setup-chrome@latest'
