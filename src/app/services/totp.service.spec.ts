@@ -57,4 +57,16 @@ describe('TotpService', () => {
         const result = (service as any).generateForAccount(account, 1111111109000);
         expect(result.code).toBe('081804');
     });
+    it('should update account and reload', async () => {
+        const storage = TestBed.inject(StorageService);
+        const updateSpy = vi.fn().mockResolvedValue(undefined);
+        const getSpy = vi.fn().mockResolvedValue([{ id: '1', issuer: 'Updated' }]);
+        storage.updateAccount = updateSpy;
+        storage.getAccounts = getSpy;
+
+        await service.updateAccount({ id: '1', issuer: 'Updated' } as any);
+
+        expect(updateSpy).toHaveBeenCalledWith({ id: '1', issuer: 'Updated' });
+        expect(getSpy).toHaveBeenCalled();
+    });
 });

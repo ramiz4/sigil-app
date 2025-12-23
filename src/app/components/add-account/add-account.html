@@ -12,6 +12,20 @@
         <h2 class="m-0">Add Account</h2>
     </div>
 
+    <div class="mb-6 bg-surface p-4 rounded-lg border border-border">
+        <label class="block mb-2 font-medium text-[0.9rem] flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                class="text-text-secondary">
+                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+            </svg>
+            Target Folder (Applied to all imports)
+        </label>
+        <input [ngModel]="targetFolder()" (ngModelChange)="targetFolder.set($event)"
+            placeholder="e.g. Work, Social, Personal..."
+            class="w-full p-3 rounded-md border border-border bg-surface text-text-main focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20">
+    </div>
+
     <div class="flex gap-2 mb-4 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         <button
             class="px-4 py-2 rounded-md border border-transparent bg-transparent text-text-secondary cursor-pointer whitespace-nowrap font-medium hover:bg-bg transition-all"

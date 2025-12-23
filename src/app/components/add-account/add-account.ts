@@ -17,6 +17,7 @@ export class AddAccount implements OnDestroy {
   router = inject(Router);
 
   mode = signal<Mode>('scan');
+  targetFolder = signal('');
 
   // Manual Form
   manualEntry = {
@@ -153,7 +154,10 @@ export class AddAccount implements OnDestroy {
 
   async add(data: any) {
     if (!data.secret) throw new Error('No secret');
-    await this.totp.addAccount(data);
+    await this.totp.addAccount({
+      ...data,
+      folder: data.folder || this.targetFolder()
+    });
     this.router.navigate(['/']);
   }
 }
