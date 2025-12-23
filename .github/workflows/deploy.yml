@@ -10,10 +10,45 @@ permissions:
   id-token: write
 
 jobs:
-  build-and-deploy:
+  version:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          
+      - uses: pnpm/action-setup@v4
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Bump version
+        id: bump
+        run: |
+          pnpm commit-and-tag-version
+          
+      - name: Push changes
+        run: |
+          git push --follow-tags origin main
+
+  build-and-deploy:
+    needs: version
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
       
       - name: Install Node.js
         uses: actions/setup-node@v4
@@ -44,6 +79,7 @@ jobs:
         uses: actions/deploy-pages@v4
 
   build-tauri:
+    needs: version
     permissions:
       contents: write
     strategy:
@@ -57,6 +93,8 @@ jobs:
     runs-on: ${{ matrix.platform }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: main
 
       - name: setup node
         uses: actions/setup-node@v4
@@ -85,7 +123,8 @@ jobs:
           tagName: v__VERSION__
           releaseName: 'Sigil v__VERSION__'
           releaseBody: 'See the assets to download the desktop version.'
-          releaseDraft: true
+          releaseDraft: false
           prerelease: false
           args: ${{ matrix.platform == 'windows-latest' && '--target x86_64-pc-windows-msvc' || '' }}
+
 
