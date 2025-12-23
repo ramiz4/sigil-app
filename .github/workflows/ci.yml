@@ -16,11 +16,11 @@ jobs:
     - name: Install Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: 20
+        node-version: 22
         
     - uses: pnpm/action-setup@v3
       with:
-        version: 8
+        version: 10
 
     - name: Install dependencies
       run: pnpm install
@@ -29,7 +29,4 @@ jobs:
       run: pnpm build
 
     - name: Test
-      # Attempt to run tests headlessly. Adjust based on available test runner.
-      # If using Karma/ChromeHeadless:
-      run: pnpm test
-      # If failing due to missing browser, we might need 'uses: browser-actions/setup-chrome@latest'
+      run: pnpm test --watch=false
