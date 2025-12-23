@@ -2,7 +2,7 @@
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
   "productName": "sigil",
   "version": "0.1.0",
-  "identifier": "com.sigil.app",
+  "identifier": "com.sigil.desktop",
   "build": {
     "frontendDist": "../dist/sigil/browser",
     "devUrl": "http://localhost:4200",

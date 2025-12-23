@@ -30,6 +30,8 @@
     "@angular/forms": "^21.0.0",
     "@angular/platform-browser": "^21.0.0",
     "@angular/router": "^21.0.0",
+    "@tauri-apps/api": "^2.9.1",
+    "@tauri-apps/plugin-log": "^2.7.1",
     "@zxing/browser": "^0.1.5",
     "idb": "^8.0.3",
     "otpauth": "^9.4.1",
