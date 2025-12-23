@@ -11,7 +11,6 @@ type Mode = 'scan' | 'manual' | 'image' | 'paste';
   selector: 'app-add-account',
   imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './add-account.html',
-  styleUrl: './add-account.scss',
 })
 export class AddAccount implements OnDestroy {
   totp = inject(TotpService);

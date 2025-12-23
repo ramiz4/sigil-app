@@ -7,7 +7,6 @@ import { TotpService } from '../../services/totp.service';
   selector: 'app-dashboard',
   imports: [CommonModule, RouterLink], // CommonModule for ngIf/ngClass etc just in case, though @for is built-in
   templateUrl: './dashboard.html',
-  styleUrl: './dashboard.scss',
 })
 export class Dashboard {
   totp = inject(TotpService);

@@ -1,3 +1,4 @@
+import { describe, it, expect, beforeEach } from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Dashboard } from './dashboard';
 import { TotpService } from '../../services/totp.service';
@@ -5,7 +6,7 @@ import { signal, computed } from '@angular/core';
 import { provideRouter } from '@angular/router';
 
 class MockTotpService {
-  displayCodes = computed(() => []);
+  displayCodes = signal([]);
   deleteAccount(id: string) { }
 }
 
@@ -25,10 +26,15 @@ describe('Dashboard', () => {
 
     fixture = TestBed.createComponent(Dashboard);
     component = fixture.componentInstance;
-    await fixture.whenStable();
+    fixture.detectChanges();
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should show empty state when no codes', () => {
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.textContent).toContain('No Accounts yet');
   });
 });

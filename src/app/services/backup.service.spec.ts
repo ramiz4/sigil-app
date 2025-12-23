@@ -1,7 +1,7 @@
+import { describe, it, expect, beforeEach, beforeAll, vi } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { BackupService } from './backup.service';
 import { StorageService, Account } from './storage.service';
-import { vi, describe, it, expect, beforeEach, beforeAll } from 'vitest';
 
 // Mock StorageService
 class MockStorageService {

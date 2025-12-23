@@ -7,7 +7,6 @@ import { BackupService } from '../../services/backup.service';
   selector: 'app-settings',
   imports: [CommonModule, RouterLink],
   templateUrl: './settings.html',
-  styleUrl: './settings.scss',
 })
 export class Settings {
 

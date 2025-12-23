@@ -1,6 +1,7 @@
-<div class="settings-container container">
-    <div class="header-row mb-4">
-        <a routerLink="/" class="back-link">
+<div class="max-w-[600px] mx-auto p-4 pt-4">
+    <div class="flex items-center gap-4 mb-4">
+        <a routerLink="/"
+            class="flex items-center gap-2 text-text-secondary no-underline font-medium hover:text-text-main">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <line x1="19" y1="12" x2="5" y2="12"></line>
@@ -8,33 +9,39 @@
             </svg>
             Back
         </a>
-        <h2>Settings</h2>
+        <h2 class="m-0">Settings</h2>
     </div>
 
-    <div class="card">
-        <h3>Appearance</h3>
-        <div class="flex-row justify-between">
+    <div class="bg-surface rounded-lg shadow-sm p-4 border border-border mb-4">
+        <h3 class="mt-0 mb-4">Appearance</h3>
+        <div class="flex items-center justify-between">
             <span>Theme</span>
-            <button (click)="toggleTheme()" class="btn">Switch Mode</button>
+            <button (click)="toggleTheme()"
+                class="inline-flex items-center justify-center px-4 py-2 rounded-md font-medium cursor-pointer transition-all bg-surface text-text-main border border-border hover:bg-bg">Switch
+                Mode</button>
         </div>
     </div>
 
-    <div class="card">
-        <h3>Data Management</h3>
-        <p class="text-sm text-muted mb-4">
+    <div class="bg-surface rounded-lg shadow-sm p-4 border border-border mb-4">
+        <h3 class="mt-0 mb-4">Data Management</h3>
+        <p class="text-sm text-text-secondary mb-4">
             Securely backup your accounts to an encrypted file.
             <br>
             <strong>Warning:</strong> If you lose your backup password, your data cannot be recovered.
         </p>
-        <div class="flex-row gap-2">
-            <button (click)="exportBackup()" class="btn btn-primary">Export Backup</button>
-            <button (click)="triggerImport()" class="btn btn-outline">Import Restore</button>
-            <input type="file" id="backupInput" (change)="onFileSelected($event)" accept=".json" style="display: none;">
+        <div class="flex items-center gap-2">
+            <button (click)="exportBackup()"
+                class="inline-flex items-center justify-center px-4 py-2 rounded-md font-medium cursor-pointer transition-all bg-primary text-white border-none hover:bg-primary-hover">Export
+                Backup</button>
+            <button (click)="triggerImport()"
+                class="inline-flex items-center justify-center px-4 py-2 rounded-md font-medium cursor-pointer transition-all bg-surface text-text-main border border-border hover:bg-bg">Import
+                Restore</button>
+            <input type="file" id="backupInput" (change)="onFileSelected($event)" accept=".json" class="hidden">
         </div>
     </div>
 
-    <div class="card warning-card">
-        <div class="flex-row">
+    <div class="bg-surface rounded-lg shadow-sm p-4 border border-border mb-4 border-l-4 border-l-danger">
+        <div class="flex items-center gap-2 mb-2">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                 class="text-danger">
@@ -43,16 +50,16 @@
                 <line x1="12" y1="9" x2="12" y2="13"></line>
                 <line x1="12" y1="17" x2="12.01" y2="17"></line>
             </svg>
-            <h3>Security Notice</h3>
+            <h3 class="m-0">Security Notice</h3>
         </div>
-        <p class="mt-4">
+        <p class="mt-4 m-0">
             Sigil stores your 2FA secrets <strong>locally</strong> in your browser's secure database (IndexedDB).
             They are never sent to any server.
             Please ensure your device is protected with a password or biometric lock.
         </p>
     </div>
 
-    <div class="text-center text-muted mt-4 text-sm">
+    <div class="text-center text-text-secondary mt-4 text-sm">
         Sigil v0.1.0 MVP
     </div>
 </div>
