@@ -1,6 +1,12 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { AddAccount } from './add-account';
+import { TotpService } from '../../services/totp.service';
+import { provideRouter } from '@angular/router';
+
+class MockTotpService {
+  async addAccount(data: any) { }
+  parseUrl(url: string) { return {}; }
+}
 
 describe('AddAccount', () => {
   let component: AddAccount;
@@ -8,9 +14,13 @@ describe('AddAccount', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AddAccount]
+      imports: [AddAccount],
+      providers: [
+        provideRouter([]),
+        { provide: TotpService, useClass: MockTotpService }
+      ]
     })
-    .compileComponents();
+      .compileComponents();
 
     fixture = TestBed.createComponent(AddAccount);
     component = fixture.componentInstance;

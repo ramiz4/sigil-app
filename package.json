@@ -43,7 +43,9 @@
     "@angular/compiler-cli": "^21.0.0",
     "@tauri-apps/cli": "^2.9.6",
     "@types/uuid": "^11.0.0",
+    "@vitest/browser-playwright": "^4.0.16",
     "jsdom": "^27.1.0",
+    "playwright": "^1.57.0",
     "typescript": "~5.9.2",
     "vitest": "^4.0.8"
   }
