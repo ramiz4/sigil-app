@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, inject, signal } from '@angular/core';
+import { Component, Input, Output, EventEmitter, inject, signal, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SecurityService } from '../../services/security.service';
 
@@ -20,6 +20,15 @@ export class LockComponent {
     // For 'set' mode
     firstPin = signal('');
     step = signal(1); // 1 = first entry, 2 = confirm
+
+    @HostListener('window:keydown', ['$event'])
+    handleKeyboardEvent(event: KeyboardEvent) {
+        if (event.key >= '0' && event.key <= '9') {
+            this.handleKey(event.key);
+        } else if (event.key === 'Backspace' || event.key === 'Delete') {
+            this.handleDelete();
+        }
+    }
 
     handleKey(key: string) {
         if (this.pin().length < 6) {
