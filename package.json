@@ -9,7 +9,8 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "tauri": "tauri",
-    "prepare": "husky"
+    "prepare": "husky",
+    "version": "node scripts/sync-version.js && git add src-tauri/tauri.conf.json"
   },
   "prettier": {
     "printWidth": 100,
