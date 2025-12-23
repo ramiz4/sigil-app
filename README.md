@@ -57,3 +57,4 @@ pnpm tauri build
 - [x] PIN Lock on app startup
 - [x] Folder organization for accounts
 - [ ] Add account -> Upload image via drag and drop
+- [ ] Add a Lock button to lock the app (pin)
