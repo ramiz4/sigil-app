@@ -59,4 +59,22 @@ describe('App', () => {
 
     expect(lockSpy).toHaveBeenCalled();
   });
+
+  it('should call security.lock() when Alt+L is pressed', async () => {
+    const fixture = TestBed.createComponent(App);
+    const security = (fixture.componentInstance as any).security;
+    vi.spyOn(security, 'hasPIN').mockReturnValue(true);
+    vi.spyOn(security, 'isUnlocked').mockReturnValue(true);
+    const lockSpy = vi.spyOn(security, 'lock');
+    fixture.detectChanges();
+
+    const event = new KeyboardEvent('keydown', {
+      key: 'l',
+      altKey: true,
+      bubbles: true
+    });
+    window.dispatchEvent(event);
+
+    expect(lockSpy).toHaveBeenCalled();
+  });
 });
