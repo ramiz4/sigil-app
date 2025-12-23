@@ -60,6 +60,11 @@ export class TotpService {
         await this.loadAccounts();
     }
 
+    async updateAccount(account: Account) {
+        await this.storage.updateAccount(account);
+        await this.loadAccounts();
+    }
+
     async deleteAccount(id: string) {
         await this.storage.deleteAccount(id);
         await this.loadAccounts();

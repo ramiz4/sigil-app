@@ -31,4 +31,22 @@ describe('AddAccount', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should apply target folder when adding account', async () => {
+    const totp = TestBed.inject(TotpService);
+    const addSpy = vi.spyOn(totp, 'addAccount');
+
+    component.targetFolder.set('Work');
+    component.manualEntry = {
+      issuer: 'Test',
+      label: 'test@test.com',
+      secret: 'ABC'
+    };
+
+    await component.addManual();
+
+    expect(addSpy).toHaveBeenCalledWith(expect.objectContaining({
+      folder: 'Work'
+    }));
+  });
 });

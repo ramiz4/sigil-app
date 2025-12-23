@@ -54,6 +54,6 @@ pnpm tauri build
 
 ## Roadmap
 - [x] Encrypted Backup/Restore (JSON)
-- [ ] PIN Lock on app startup
-- [ ] Folder organization for accounts
-- [ ] Mobile version (using Capacitor provided responsive design)
+- [x] PIN Lock on app startup
+- [x] Folder organization for accounts
+- [ ] Add account -> Upload image via drag and drop

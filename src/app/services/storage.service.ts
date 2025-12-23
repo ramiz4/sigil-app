@@ -12,6 +12,7 @@ export interface Account {
     period: number;
     type: 'totp';
     created: number;
+    folder?: string;
 }
 
 interface SigilDB extends DBSchema {
