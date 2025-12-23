@@ -1,4 +1,4 @@
-import { Component, signal, inject } from '@angular/core';
+import { Component, signal, inject, HostListener } from '@angular/core';
 import { RouterOutlet, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { SecurityService } from './services/security.service';
@@ -13,4 +13,15 @@ import { LockComponent } from './components/lock/lock';
 export class App {
   protected readonly title = signal('sigil');
   protected security = inject(SecurityService);
+
+  @HostListener('window:keydown', ['$event'])
+  handleKeyboardEvent(event: KeyboardEvent) {
+    const isLKey = event.code === 'KeyL' || event.key?.toLowerCase() === 'l';
+    if (event.ctrlKey && event.shiftKey && isLKey) {
+      if (this.security.hasPIN() && this.security.isUnlocked()) {
+        event.preventDefault();
+        this.security.lock();
+      }
+    }
+  }
 }
