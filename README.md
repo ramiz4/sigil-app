@@ -18,12 +18,16 @@ The name **Sigil** refers to an inscribed symbol believed to have magical power.
 - Node.js (v18+)
 - pnpm
 - Rust (for Tauri desktop build)
+- mkcert (for SSL certificates)
 
 ### Web Development
 To run the web application in the browser:
 
 ```bash
 pnpm install
+# Generate SSL certs (requires mkcert installed)
+pnpm setup:ssl
+# Start server with HTTPS
 pnpm dev
 ```
 Open `http://localhost:4200`.
@@ -50,7 +54,7 @@ pnpm tauri build
 - **Frontend**: Angular 21 (Standalone Components, Signals).
 - **Storage**: IndexedDB (via `idb`) for persistent local storage on both Web and Desktop.
 - **Crypto**: `otpauth` library for RFC 6238 TOTP generation.
-- **Scanning**: `@zxing/browser` for QR code decoding.
+- **Scanning**: `qr-scanner` for high-performance QR code decoding.
 
 ## Roadmap
 - [x] Encrypted Backup/Restore (JSON)
