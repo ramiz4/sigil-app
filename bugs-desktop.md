@@ -40,3 +40,12 @@ The following bugs are present only in the desktop version of the app:
     4. Scan the QR code
     5. See the QR code scanned
     6. See the account added
+
+## 5. Remove PIN doesn't work
+
+### Steps to Reproduce
+
+    1. Open the app
+    2. Click on the settings button
+    3. Click on the Remove PIN button
+    4. See the PIN removed

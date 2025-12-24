@@ -4,12 +4,19 @@ import { By } from '@angular/platform-browser';
 import { provideRouter } from '@angular/router';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { BackupService } from '../../services/backup.service';
+import { DialogService } from '../../services/dialog.service';
 import { SecurityService } from '../../services/security.service';
 import { Settings } from './settings';
 
 class MockBackupService {
   exportBackup = vi.fn();
   importBackup = vi.fn();
+}
+
+class MockDialogService {
+  confirm = vi.fn().mockResolvedValue(true);
+  alert = vi.fn().mockResolvedValue(undefined);
+  prompt = vi.fn().mockResolvedValue(null);
 }
 
 class MockSecurityService {
@@ -29,6 +36,7 @@ describe('Settings', () => {
   let component: Settings;
   let fixture: ComponentFixture<Settings>;
   let backupService: MockBackupService;
+  let dialogService: MockDialogService;
   let securityService: MockSecurityService;
 
   beforeEach(async () => {
@@ -59,6 +67,7 @@ describe('Settings', () => {
       providers: [
         provideRouter([]),
         { provide: BackupService, useClass: MockBackupService },
+        { provide: DialogService, useClass: MockDialogService },
         { provide: SecurityService, useClass: MockSecurityService },
       ],
     }).compileComponents();
@@ -67,6 +76,7 @@ describe('Settings', () => {
     component = fixture.componentInstance;
 
     backupService = TestBed.inject(BackupService) as unknown as MockBackupService;
+    dialogService = TestBed.inject(DialogService) as unknown as MockDialogService;
     securityService = TestBed.inject(SecurityService) as unknown as MockSecurityService;
 
     fixture.detectChanges();
@@ -101,16 +111,19 @@ describe('Settings', () => {
       expect(component.showPINSetup()).toBe(false);
     });
 
-    it('removePIN should call security.removePIN when confirmed', () => {
-      vi.spyOn(window, 'confirm').mockReturnValue(true);
-      component.removePIN();
-      expect(window.confirm).toHaveBeenCalledWith(expect.stringContaining('remove the PIN'));
+    it('removePIN should call security.removePIN when confirmed', async () => {
+      dialogService.confirm.mockResolvedValue(true);
+      await component.removePIN();
+      expect(dialogService.confirm).toHaveBeenCalledWith(
+        expect.stringContaining('remove the PIN'),
+        'Remove PIN',
+      );
       expect(securityService.removePIN).toHaveBeenCalled();
     });
 
-    it('removePIN should NOT call security.removePIN when cancelled', () => {
-      vi.spyOn(window, 'confirm').mockReturnValue(false);
-      component.removePIN();
+    it('removePIN should NOT call security.removePIN when cancelled', async () => {
+      dialogService.confirm.mockResolvedValue(false);
+      await component.removePIN();
       expect(securityService.removePIN).not.toHaveBeenCalled();
     });
   });

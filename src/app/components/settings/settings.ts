@@ -3,6 +3,7 @@ import { Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import packageJson from '@package-json';
 import { BackupService } from '../../services/backup.service';
+import { DialogService } from '../../services/dialog.service';
 import { SecurityService } from '../../services/security.service';
 import { LockComponent } from '../lock/lock';
 import { ThemeToggle } from '../theme-toggle';
@@ -15,6 +16,7 @@ import { ThemeToggle } from '../theme-toggle';
 })
 export class Settings {
   private backupService = inject(BackupService);
+  private dialog = inject(DialogService);
   public security = inject(SecurityService);
 
   showPINSetup = signal(false);
@@ -68,8 +70,8 @@ export class Settings {
     this.showPINSetup.set(true);
   }
 
-  removePIN() {
-    if (confirm('Are you sure you want to remove the PIN lock?')) {
+  async removePIN() {
+    if (await this.dialog.confirm('Are you sure you want to remove the PIN lock?', 'Remove PIN')) {
       this.security.removePIN();
     }
   }
