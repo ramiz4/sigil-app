@@ -17,6 +17,7 @@ describe('TotpService', () => {
             addAccount: () => Promise.resolve({}),
             updateAccount: () => Promise.resolve(),
             deleteAccount: () => Promise.resolve(),
+            deleteAccounts: () => Promise.resolve(),
           },
         },
       ],
@@ -129,11 +130,11 @@ describe('TotpService', () => {
   it('should delete multiple accounts and reload', async () => {
     const storage = TestBed.inject(StorageService);
     const deleteAccountsSpy = vi.fn().mockResolvedValue(undefined);
-    (storage as any).deleteAccounts = deleteAccountsSpy;
+    vi.spyOn(storage, 'deleteAccounts').mockImplementation(deleteAccountsSpy);
     const getSpy = vi.fn().mockResolvedValue([]);
     storage.getAccounts = getSpy;
 
-    await (service as any).deleteAccounts(['1', '2']);
+    await service.deleteAccounts(['1', '2']);
 
     expect(deleteAccountsSpy).toHaveBeenCalledWith(['1', '2']);
     expect(getSpy).toHaveBeenCalled();
