@@ -1,4 +1,4 @@
-import { computed, Injectable, signal, WritableSignal } from '@angular/core';
+import { computed, inject, Injectable, signal, WritableSignal } from '@angular/core';
 import { TOTP, URI } from 'otpauth';
 import { Account, StorageService } from './storage.service';
 
@@ -20,7 +20,9 @@ export class TotpService {
     return this.accountsSignal().map((acc) => this.generateForAccount(acc, now));
   });
 
-  constructor(private storage: StorageService) {
+  private storage = inject(StorageService);
+
+  constructor() {
     this.loadAccounts();
     // Update every second
     setInterval(() => {
@@ -89,8 +91,7 @@ export class TotpService {
 
     // progress
     // otpauth doesn't give precise progress but we can calc it.
-    const epoch = Math.floor(timestamp / 1000);
-    const progress = (epoch % period) / period; // 0..1 ascending
+    const epoch = Math.floor(timestamp / 1000); // 0..1 ascending
     // Usually auth apps show countdown (1..0) or progress.
     // Let's do remaining ratio:
     const remaining = period - (epoch % period);
@@ -117,7 +118,7 @@ export class TotpService {
         digits: parsed.digits,
         period: parsed.period,
       };
-    } catch (e) {
+    } catch {
       throw new Error('Invalid OTP URL');
     }
   }

@@ -39,50 +39,55 @@
     <div class="flex items-center justify-between">
       <span>PIN Lock</span>
       <div class="flex gap-2">
-        <button
-          *ngIf="!security.hasPIN()"
-          (click)="setupPIN()"
-          class="inline-flex items-center justify-center px-4 py-2 rounded-md font-medium cursor-pointer transition-all bg-primary text-white border-none hover:bg-primary-hover"
-        >
-          Set PIN
-        </button>
-        <button
-          *ngIf="security.hasPIN()"
-          (click)="setupPIN()"
-          class="inline-flex items-center justify-center px-4 py-2 rounded-md font-medium cursor-pointer transition-all bg-surface text-text-main border border-border hover:bg-bg"
-        >
-          Change PIN
-        </button>
-        <button
-          *ngIf="security.hasPIN()"
-          (click)="removePIN()"
-          class="inline-flex items-center justify-center px-4 py-2 rounded-md font-medium cursor-pointer transition-all bg-surface text-danger border border-danger/20 hover:bg-danger/10"
-        >
-          Remove PIN
-        </button>
+        @if (!security.hasPIN()) {
+          <button
+            (click)="setupPIN()"
+            class="inline-flex items-center justify-center px-4 py-2 rounded-md font-medium cursor-pointer transition-all bg-primary text-white border-none hover:bg-primary-hover"
+          >
+            Set PIN
+          </button>
+        }
+        @if (security.hasPIN()) {
+          <button
+            (click)="setupPIN()"
+            class="inline-flex items-center justify-center px-4 py-2 rounded-md font-medium cursor-pointer transition-all bg-surface text-text-main border border-border hover:bg-bg"
+          >
+            Change PIN
+          </button>
+        }
+        @if (security.hasPIN()) {
+          <button
+            (click)="removePIN()"
+            class="inline-flex items-center justify-center px-4 py-2 rounded-md font-medium cursor-pointer transition-all bg-surface text-danger border border-danger/20 hover:bg-danger/10"
+          >
+            Remove PIN
+          </button>
+        }
       </div>
     </div>
   </div>
 
   <!-- PIN Setup Modal -->
-  <div *ngIf="showPINSetup()" class="fixed inset-0 z-200">
-    <app-lock mode="set" (unlocked)="onPINSet()"></app-lock>
-    <button
-      (click)="showPINSetup.set(false)"
-      class="fixed top-6 right-6 z-201 p-2 text-text-secondary hover:text-text-main transition-colors"
-    >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke-width="2"
-        stroke="currentColor"
-        class="w-6 h-6"
+  @if (showPINSetup()) {
+    <div class="fixed inset-0 z-200">
+      <app-lock mode="set" (unlocked)="onPINSet()"></app-lock>
+      <button
+        (click)="showPINSetup.set(false)"
+        class="fixed top-6 right-6 z-201 p-2 text-text-secondary hover:text-text-main transition-colors"
       >
-        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-      </svg>
-    </button>
-  </div>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="2"
+          stroke="currentColor"
+          class="w-6 h-6"
+        >
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+  }
 
   <div class="bg-surface rounded-lg shadow-sm p-4 border border-border mb-4">
     <h3 class="mt-0 mb-4">Data Management</h3>

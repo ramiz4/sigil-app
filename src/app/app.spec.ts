@@ -26,7 +26,7 @@ describe('App', () => {
 
   it('should show lock button when PIN is set', async () => {
     const fixture = TestBed.createComponent(App);
-    const security = (fixture.componentInstance as any).security;
+    const security = fixture.componentInstance.security;
     vi.spyOn(security, 'hasPIN').mockReturnValue(true);
     fixture.detectChanges();
 
@@ -37,7 +37,7 @@ describe('App', () => {
 
   it('should hide lock button when PIN is not set', async () => {
     const fixture = TestBed.createComponent(App);
-    const security = (fixture.componentInstance as any).security;
+    const security = fixture.componentInstance.security;
     vi.spyOn(security, 'hasPIN').mockReturnValue(false);
     fixture.detectChanges();
 
@@ -48,7 +48,7 @@ describe('App', () => {
 
   it('should call security.lock() when lock button is clicked', async () => {
     const fixture = TestBed.createComponent(App);
-    const security = (fixture.componentInstance as any).security;
+    const security = fixture.componentInstance.security;
     vi.spyOn(security, 'hasPIN').mockReturnValue(true);
     const lockSpy = vi.spyOn(security, 'lock');
     fixture.detectChanges();
@@ -62,7 +62,7 @@ describe('App', () => {
 
   it('should call security.lock() when Ctrl+Shift+L is pressed', async () => {
     const fixture = TestBed.createComponent(App);
-    const security = (fixture.componentInstance as any).security;
+    const security = fixture.componentInstance.security;
     vi.spyOn(security, 'hasPIN').mockReturnValue(true);
     vi.spyOn(security, 'isUnlocked').mockReturnValue(true);
     const lockSpy = vi.spyOn(security, 'lock');

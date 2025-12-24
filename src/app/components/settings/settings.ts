@@ -39,13 +39,14 @@ export class Settings {
     document.getElementById('backupInput')?.click();
   }
 
-  async onFileSelected(event: any) {
-    const file = event.target.files[0];
+  async onFileSelected(event: Event) {
+    const target = event.target as HTMLInputElement;
+    const file = target.files?.[0];
     if (!file) return;
 
     const password = prompt('Enter the password for this backup:');
     if (!password) {
-      event.target.value = ''; // reset
+      target.value = ''; // reset
       return;
     }
 
@@ -54,12 +55,13 @@ export class Settings {
       alert(
         `Restore complete.\nRestored: ${result.restored}\nSkipped (duplicates): ${result.skipped}`,
       );
-    } catch (e: any) {
-      console.error(e);
-      alert('Restore failed: ' + e.message);
+    } catch (e: unknown) {
+      const error = e as Error;
+      console.error(error);
+      alert('Restore failed: ' + (error.message || String(error)));
     }
 
-    event.target.value = ''; // reset so same file can be selected again if needed
+    target.value = ''; // reset so same file can be selected again if needed
   }
 
   setupPIN() {

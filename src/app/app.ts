@@ -14,7 +14,7 @@ import { SecurityService } from './services/security.service';
 })
 export class App {
   protected readonly title = signal('sigil');
-  protected security = inject(SecurityService);
+  public security = inject(SecurityService);
 
   @HostListener('window:keydown', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent) {

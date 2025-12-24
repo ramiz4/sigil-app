@@ -16,6 +16,7 @@ export class DialogService {
   private _activeDialog = signal<DialogOptions | null>(null);
   readonly activeDialog = this._activeDialog.asReadonly();
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private resolver: ((value: any) => void) | null = null;
 
   async alert(message: string, title = 'Alert'): Promise<void> {
@@ -57,6 +58,7 @@ export class DialogService {
     });
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   resolve(value: any) {
     if (this.resolver) {
       this.resolver(value);

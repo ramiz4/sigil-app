@@ -4,19 +4,28 @@ import { By } from '@angular/platform-browser';
 import { provideRouter } from '@angular/router';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { DialogService } from '../../services/dialog.service';
+import { Account } from '../../services/storage.service';
 import { ToastService } from '../../services/toast.service';
 import { TotpService } from '../../services/totp.service';
 import { Dashboard } from './dashboard';
 
 class MockTotpService {
-  displayCodes = signal([]);
-  deleteAccount(id: string) {}
-  updateAccount(account: any) {}
+  displayCodes = signal<unknown[]>([]);
+  deleteAccount(_id: string) {
+    // noop
+  }
+  updateAccount(_account: unknown) {
+    // noop
+  }
 }
 
 class MockToastService {
-  success(message: string) {}
-  error(message: string) {}
+  success(_message: string) {
+    // noop
+  }
+  error(_message: string) {
+    // noop
+  }
 }
 
 class MockDialogService {
@@ -59,11 +68,11 @@ describe('Dashboard', () => {
   it('should group codes by folder', () => {
     const mockService = TestBed.inject(TotpService) as unknown as MockTotpService;
     mockService.displayCodes.set([
-      { account: { id: '1', issuer: 'A', folder: 'Work' }, code: '123' },
-      { account: { id: '2', issuer: 'B', folder: 'Home' }, code: '456' },
-      { account: { id: '3', issuer: 'C', folder: 'Work' }, code: '789' },
-      { account: { id: '4', issuer: 'D' }, code: '000' },
-    ] as any);
+      { account: { id: '1', issuer: 'A', folder: 'Work' } as Account, code: '123' },
+      { account: { id: '2', issuer: 'B', folder: 'Home' } as Account, code: '456' },
+      { account: { id: '3', issuer: 'C', folder: 'Work' } as Account, code: '789' },
+      { account: { id: '4', issuer: 'D' } as Account, code: '000' },
+    ]);
 
     fixture.detectChanges();
 
@@ -83,9 +92,9 @@ describe('Dashboard', () => {
   it('should sort folders alphabetically', () => {
     const mockService = TestBed.inject(TotpService) as unknown as MockTotpService;
     mockService.displayCodes.set([
-      { account: { id: '1', issuer: 'A', folder: 'Beta' }, code: '123' },
-      { account: { id: '2', issuer: 'B', folder: 'Alpha' }, code: '456' },
-    ] as any);
+      { account: { id: '1', issuer: 'A', folder: 'Beta' } as Account, code: '123' },
+      { account: { id: '2', issuer: 'B', folder: 'Alpha' } as Account, code: '456' },
+    ]);
 
     fixture.detectChanges();
 
@@ -96,18 +105,18 @@ describe('Dashboard', () => {
 
   it('should copy code to clipboard and show toast', async () => {
     const writeTextMock = vi.fn().mockResolvedValue(undefined);
-    // @ts-ignore
+    // @ts-expect-error - navigator.clipboard is read-only in some environments or not fully typed in tests
     navigator.clipboard = { writeText: writeTextMock };
     const toastSpy = vi.spyOn(toastService, 'success');
 
     const mockService = TestBed.inject(TotpService) as unknown as MockTotpService;
     mockService.displayCodes.set([
       {
-        account: { id: '1', issuer: 'Test', label: 'test@example.com' },
+        account: { id: '1', issuer: 'Test', label: 'test@example.com' } as Account,
         code: '999999',
         progress: 0.5,
       },
-    ] as any);
+    ]);
     fixture.detectChanges();
 
     const itemDiv = fixture.debugElement.query(By.css('.bg-surface'));
@@ -150,7 +159,7 @@ describe('Dashboard', () => {
     const account = { id: '1', issuer: 'Test', folder: 'Old' };
     dialogService.prompt.mockResolvedValue('New Folder');
 
-    await component.editFolder(account as any);
+    await component.editFolder(account as Account);
 
     expect(updateSpy).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -167,7 +176,7 @@ describe('Dashboard', () => {
     const account = { id: '1', issuer: 'Test', folder: 'Old' };
     dialogService.prompt.mockResolvedValue(null);
 
-    await component.editFolder(account as any);
+    await component.editFolder(account as Account);
 
     expect(updateSpy).not.toHaveBeenCalled();
   });

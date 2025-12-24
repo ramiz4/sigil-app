@@ -59,7 +59,10 @@
               <div
                 class="bg-surface border border-border rounded-lg p-5 relative transition-all cursor-pointer overflow-hidden hover:-translate-y-0.5 hover:shadow-md hover:border-primary active:scale-[0.98]"
                 (click)="copyCode(item.code)"
+                (keydown.enter)="copyCode(item.code)"
+                tabindex="0"
                 title="Click to copy"
+                role="button"
               >
                 <div class="flex justify-between items-start mb-4">
                   <div class="flex flex-col">
@@ -142,7 +145,7 @@
 
   <a
     routerLink="/add"
-    class="fixed bottom-6 right-6 w-[56px] h-[56px] rounded-full bg-primary text-white flex items-center justify-center shadow-md transition-all z-[100] hover:bg-primary-hover hover:scale-105"
+    class="fixed bottom-6 right-6 w-[56px] h-[56px] rounded-full bg-primary text-white flex items-center justify-center shadow-md transition-all z-100 hover:bg-primary-hover hover:scale-105"
   >
     <svg
       xmlns="http://www.w3.org/2000/svg"

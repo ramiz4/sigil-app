@@ -12,6 +12,7 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import QrScanner from 'qr-scanner';
 import { DialogService } from '../../services/dialog.service';
+import { Account } from '../../services/storage.service';
 import { TotpService } from '../../services/totp.service';
 
 type Mode = 'scan' | 'manual' | 'image' | 'paste';
@@ -88,9 +89,10 @@ export class AddAccount implements OnDestroy, AfterViewInit {
         );
 
         await this.qrScanner.start();
-      } catch (err: any) {
-        this.scanError = 'Camera error: ' + (err.message || err);
-        console.error(err);
+      } catch (err: unknown) {
+        const error = err as Error;
+        this.scanError = 'Camera error: ' + (error.message || String(error));
+        console.error(error);
       }
     } else {
       this.scanError = 'Video element not ready';
@@ -136,7 +138,7 @@ export class AddAccount implements OnDestroy, AfterViewInit {
         digits: 6,
         period: 30,
       });
-    } catch (e) {
+    } catch {
       await this.dialog.alert('Error adding account');
     }
   }
@@ -152,7 +154,7 @@ export class AddAccount implements OnDestroy, AfterViewInit {
         const parsed = this.totp.parseUrl(line);
         await this.add(parsed);
         added++;
-      } catch (e) {
+      } catch {
         console.warn('Failed to parse line');
       }
     }
@@ -211,11 +213,17 @@ export class AddAccount implements OnDestroy, AfterViewInit {
     }
   }
 
-  async add(data: any) {
+  async add(data: Partial<Account>) {
     if (!data.secret) throw new Error('No secret');
     await this.totp.addAccount({
-      ...data,
-      folder: data.folder || this.targetFolder(),
+      issuer: data.issuer || 'Unknown',
+      label: data.label || 'Unknown',
+      secret: data.secret,
+      algorithm: data.algorithm || 'SHA1',
+      digits: data.digits || 6,
+      period: data.period || 30,
+      type: 'totp',
+      folder: data.folder || this.targetFolder() || undefined,
     });
     this.router.navigate(['/']);
   }

@@ -29,14 +29,22 @@ describe('Settings', () => {
   beforeEach(async () => {
     Object.defineProperty(window, 'matchMedia', {
       writable: true,
-      value: (query: any) => ({
+      value: (query: string) => ({
         matches: false,
         media: query,
         onchange: null,
-        addListener: () => {},
-        removeListener: () => {},
-        addEventListener: () => {},
-        removeEventListener: () => {},
+        addListener: () => {
+          // noop
+        },
+        removeListener: () => {
+          // noop
+        },
+        addEventListener: () => {
+          // noop
+        },
+        removeEventListener: () => {
+          // noop
+        },
         dispatchEvent: () => false,
       }),
     });
@@ -53,8 +61,8 @@ describe('Settings', () => {
     fixture = TestBed.createComponent(Settings);
     component = fixture.componentInstance;
 
-    backupService = TestBed.inject(BackupService) as any;
-    securityService = TestBed.inject(SecurityService) as any;
+    backupService = TestBed.inject(BackupService) as unknown as MockBackupService;
+    securityService = TestBed.inject(SecurityService) as unknown as MockSecurityService;
 
     fixture.detectChanges();
   });
@@ -105,7 +113,9 @@ describe('Settings', () => {
   describe('Backup Export', () => {
     it('should export backup when password is provided', async () => {
       vi.spyOn(window, 'prompt').mockReturnValue('s3cr3t');
-      vi.spyOn(window, 'alert').mockImplementation(() => {});
+      vi.spyOn(window, 'alert').mockImplementation(() => {
+        // noop
+      });
       backupService.exportBackup.mockResolvedValue(undefined);
 
       await component.exportBackup();
@@ -123,8 +133,12 @@ describe('Settings', () => {
 
     it('should handle export error', async () => {
       vi.spyOn(window, 'prompt').mockReturnValue('s3cr3t');
-      vi.spyOn(window, 'alert').mockImplementation(() => {});
-      vi.spyOn(console, 'error').mockImplementation(() => {});
+      vi.spyOn(window, 'alert').mockImplementation(() => {
+        // noop
+      });
+      vi.spyOn(console, 'error').mockImplementation(() => {
+        // noop
+      });
       backupService.exportBackup.mockRejectedValue(new Error('Export failed'));
 
       await component.exportBackup();
@@ -147,13 +161,17 @@ describe('Settings', () => {
 
     it('onFileSelected should import backup when password provided', async () => {
       const mockFile = new File(['{}'], 'backup.json', { type: 'application/json' });
-      const event = { target: { files: [mockFile], value: 'fake/path' } };
+      const event = {
+        target: { files: [mockFile], value: 'fake/path' },
+      };
 
       vi.spyOn(window, 'prompt').mockReturnValue('s3cr3t');
-      vi.spyOn(window, 'alert').mockImplementation(() => {});
+      vi.spyOn(window, 'alert').mockImplementation(() => {
+        // noop
+      });
       backupService.importBackup.mockResolvedValue({ restored: 5, skipped: 2 });
 
-      await component.onFileSelected(event);
+      await component.onFileSelected(event as unknown as Event);
 
       expect(window.prompt).toHaveBeenCalled();
       expect(backupService.importBackup).toHaveBeenCalledWith(mockFile, 's3cr3t');
@@ -164,7 +182,7 @@ describe('Settings', () => {
     it('onFileSelected should abort if no file selected', async () => {
       const event = { target: { files: [] } };
       vi.spyOn(window, 'prompt').mockReturnValue(null);
-      await component.onFileSelected(event);
+      await component.onFileSelected(event as unknown as Event);
       expect(window.prompt).not.toHaveBeenCalled();
     });
 
@@ -173,7 +191,7 @@ describe('Settings', () => {
       const event = { target: { files: [mockFile], value: 'set' } };
       vi.spyOn(window, 'prompt').mockReturnValue(null);
 
-      await component.onFileSelected(event);
+      await component.onFileSelected(event as unknown as Event);
 
       expect(backupService.importBackup).not.toHaveBeenCalled();
       expect(event.target.value).toBe('');
@@ -183,11 +201,15 @@ describe('Settings', () => {
       const mockFile = new File([''], 'backup.json');
       const event = { target: { files: [mockFile], value: 'set' } };
       vi.spyOn(window, 'prompt').mockReturnValue('pass');
-      vi.spyOn(window, 'alert').mockImplementation(() => {});
-      vi.spyOn(console, 'error').mockImplementation(() => {});
+      vi.spyOn(window, 'alert').mockImplementation(() => {
+        // noop
+      });
+      vi.spyOn(console, 'error').mockImplementation(() => {
+        // noop
+      });
       backupService.importBackup.mockRejectedValue(new Error('Bad JSON'));
 
-      await component.onFileSelected(event);
+      await component.onFileSelected(event as unknown as Event);
 
       expect(window.alert).toHaveBeenCalledWith(expect.stringContaining('Restore failed'));
       expect(event.target.value).toBe('');

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Account, StorageService } from './storage.service';
 
 interface BackupData {
@@ -12,7 +12,7 @@ interface BackupData {
   providedIn: 'root',
 })
 export class BackupService {
-  constructor(private storage: StorageService) {}
+  private storage = inject(StorageService);
 
   /**
    * Export all accounts as an encrypted JSON string
@@ -59,7 +59,7 @@ export class BackupService {
     let backup: BackupData;
     try {
       backup = JSON.parse(text);
-    } catch (e) {
+    } catch {
       throw new Error('Invalid backup file format');
     }
 
@@ -80,12 +80,14 @@ export class BackupService {
       decryptedBuffer = await window.crypto.subtle.decrypt(
         {
           name: 'AES-GCM',
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           iv: iv as any,
         },
         key,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         encryptedData as any,
       );
-    } catch (e) {
+    } catch {
       throw new Error('Incorrect password or corrupted file');
     }
 
@@ -116,8 +118,16 @@ export class BackupService {
         // For MVP, treating as "add account" is safer for ID collisions,
         // but "restore" implies exact state recovery.
         // Given StorageService generates ID on add, let's strip ID.
-        const { id, created, ...rest } = acc;
-        await this.storage.addAccount(rest);
+        const { issuer, label, secret, algorithm, digits, period, type } = acc;
+        await this.storage.addAccount({
+          issuer,
+          label,
+          secret,
+          algorithm,
+          digits,
+          period,
+          type: type || 'totp',
+        });
         restored++;
       } else {
         skipped++;
@@ -142,6 +152,7 @@ export class BackupService {
     return window.crypto.subtle.deriveKey(
       {
         name: 'PBKDF2',
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         salt: salt as any,
         iterations: 100000,
         hash: 'SHA-256',

@@ -24,7 +24,7 @@
   </div>
 
   <div class="mb-6 bg-surface p-4 rounded-lg border border-border">
-    <label class="mb-2 font-medium text-[0.9rem] flex items-center gap-2">
+    <label for="targetFolder" class="mb-2 font-medium text-[0.9rem] flex items-center gap-2">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="16"
@@ -44,6 +44,7 @@
       Target Folder (Applied to all imports)
     </label>
     <input
+      id="targetFolder"
       [ngModel]="targetFolder()"
       (ngModelChange)="targetFolder.set($event)"
       placeholder="e.g. Work, Social, Personal..."
@@ -115,8 +116,9 @@
     @if (mode() === 'manual') {
       <form (ngSubmit)="addManual()" class="manual-form">
         <div class="mb-4">
-          <label class="block mb-2 font-medium text-[0.9rem]">Issuer</label>
+          <label for="issuer" class="block mb-2 font-medium text-[0.9rem]">Issuer</label>
           <input
+            id="issuer"
             [(ngModel)]="manualEntry.issuer"
             name="issuer"
             placeholder="e.g. GitHub"
@@ -125,8 +127,9 @@
         </div>
 
         <div class="mb-4">
-          <label class="block mb-2 font-medium text-[0.9rem]">Label</label>
+          <label for="label" class="block mb-2 font-medium text-[0.9rem]">Label</label>
           <input
+            id="label"
             [(ngModel)]="manualEntry.label"
             name="label"
             placeholder="user@example.com"
@@ -135,8 +138,11 @@
         </div>
 
         <div class="mb-4">
-          <label class="block mb-2 font-medium text-[0.9rem]">Secret Key (Base32)</label>
+          <label for="secret" class="block mb-2 font-medium text-[0.9rem]"
+            >Secret Key (Base32)</label
+          >
           <input
+            id="secret"
             [(ngModel)]="manualEntry.secret"
             name="secret"
             placeholder="JBSWY3DPEHPK3PXP"

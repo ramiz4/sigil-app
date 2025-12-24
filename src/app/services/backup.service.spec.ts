@@ -11,7 +11,7 @@ class MockStorageService {
     return this.accounts;
   }
 
-  async addAccount(account: any) {
+  async addAccount(account: Omit<Account, 'id' | 'created'>) {
     this.accounts.push({ ...account, id: 'test-id', created: Date.now() });
   }
 }
@@ -43,10 +43,14 @@ describe('BackupService', () => {
 
     // Spy on window.URL.createObjectURL
     vi.spyOn(window.URL, 'createObjectURL').mockReturnValue('blob:test');
-    vi.spyOn(window.URL, 'revokeObjectURL').mockImplementation(() => {});
+    vi.spyOn(window.URL, 'revokeObjectURL').mockImplementation(() => {
+      // noop
+    });
     const a = document.createElement('a');
     vi.spyOn(document, 'createElement').mockReturnValue(a);
-    vi.spyOn(a, 'click').mockImplementation(() => {});
+    vi.spyOn(a, 'click').mockImplementation(() => {
+      // noop
+    });
   });
 
   it('should be created', () => {
@@ -73,8 +77,8 @@ describe('BackupService', () => {
     await service.exportBackup(password);
 
     // Capture the blob passed to createObjectURL
-    const createObjUrlSpy = window.URL.createObjectURL as any;
-    const blob = createObjUrlSpy.mock.lastCall[0] as Blob;
+    const createObjUrlSpy = vi.mocked(window.URL.createObjectURL);
+    const blob = createObjUrlSpy.mock.lastCall![0] as Blob;
 
     // Use the method on blob, which might be polyfilled now
     const text = await blob.text();
@@ -113,8 +117,8 @@ describe('BackupService', () => {
     ];
 
     await service.exportBackup('correct-password');
-    const createObjUrlSpy = window.URL.createObjectURL as any;
-    const blob = createObjUrlSpy.mock.lastCall[0] as Blob;
+    const createObjUrlSpy = vi.mocked(window.URL.createObjectURL);
+    const blob = createObjUrlSpy.mock.lastCall![0] as Blob;
     const text = await blob.text();
 
     const file = new File([text], 'backup.json', { type: 'application/json' });

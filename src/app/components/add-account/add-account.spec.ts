@@ -6,9 +6,18 @@ import { TotpService } from '../../services/totp.service';
 import { AddAccount } from './add-account';
 
 class MockTotpService {
-  async addAccount(data: any) {}
-  parseUrl(url: string) {
-    return {};
+  async addAccount(_data: unknown): Promise<void> {
+    // noop
+  }
+  parseUrl(_url: string) {
+    return {
+      issuer: 'Test',
+      label: 'Test',
+      secret: 'ABC',
+      algorithm: 'SHA1',
+      digits: 6,
+      period: 30,
+    };
   }
 }
 
@@ -109,7 +118,9 @@ describe('AddAccount', () => {
   });
 
   it('should process file on drop', () => {
-    const processSpy = vi.spyOn(component, 'processImageFile').mockImplementation(async () => {});
+    const processSpy = vi.spyOn(component, 'processImageFile').mockImplementation(async () => {
+      // noop
+    });
     const mockFile = new File([''], 'qr.png', { type: 'image/png' });
 
     const mockEvent = {
