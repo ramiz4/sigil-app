@@ -26,4 +26,14 @@ export class App {
       }
     }
   }
+
+  @HostListener('window:dragover', ['$event'])
+  onWindowDragOver(event: DragEvent) {
+    event.preventDefault(); // Prevents browser from opening the file
+  }
+
+  @HostListener('window:drop', ['$event'])
+  onWindowDrop(event: DragEvent) {
+    event.preventDefault(); // Prevents browser from opening the file
+  }
 }

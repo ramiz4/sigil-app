@@ -142,6 +142,9 @@ export class AddAccount implements OnDestroy {
   onDragOver(event: DragEvent) {
     event.preventDefault();
     event.stopPropagation();
+    if (event.dataTransfer) {
+      event.dataTransfer.dropEffect = 'copy';
+    }
     this.isDragging.set(true);
   }
 
