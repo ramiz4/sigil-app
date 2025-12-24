@@ -79,4 +79,4 @@ pnpm tauri build
 - [x] Add capability to move accounts via drag and drop
 - [x] Add capability to delete accounts
 - [x] Add capability to delete multiple accounts
-- [ ] Add full offline first PWA support
+- [x] Add full offline first PWA support
