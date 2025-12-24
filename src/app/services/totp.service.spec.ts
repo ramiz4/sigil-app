@@ -25,7 +25,12 @@ describe('TotpService', () => {
   });
 
   it('should throw on invalid URL', () => {
-    expect(() => service.parseUrl('invalid-url')).toThrow();
+    expect(() => service.parseUrl('invalid-url')).toThrow('Invalid OTP URL');
+  });
+
+  it('should throw "Only TOTP supported" for non-totp URLs', () => {
+    const url = 'otpauth://hotp/Example:alice?secret=JBSWY3DPEHPK3PXP&counter=0';
+    expect(() => service.parseUrl(url)).toThrow('Only TOTP supported');
   });
 
   it('should generate correct RFC 6238 code (SHA1)', () => {
@@ -78,5 +83,17 @@ describe('TotpService', () => {
 
     expect(updateSpy).toHaveBeenCalledWith({ id: '1', issuer: 'Updated' });
     expect(getSpy).toHaveBeenCalled();
+  });
+
+  it('should throw error when adding duplicate account', async () => {
+    const storage = TestBed.inject(StorageService);
+    vi.spyOn(storage, 'getAccounts').mockResolvedValue([
+      { issuer: 'Test', label: 'user', secret: 'ABC' } as Account,
+    ]);
+    await service.loadAccounts();
+
+    await expect(
+      service.addAccount({ issuer: 'Test', label: 'user', secret: 'ABC' } as any),
+    ).rejects.toThrow('Duplicate account');
   });
 });

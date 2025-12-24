@@ -125,9 +125,11 @@ export class AddAccount implements OnDestroy, AfterViewInit {
     try {
       const parsed = this.totp.parseUrl(text);
       await this.add(parsed);
-    } catch (e) {
+    } catch (e: any) {
       console.error(e);
-      await this.dialog.alert('Invalid QR Code');
+      const message =
+        e.message === 'Duplicate account' ? 'This account already exists' : 'Invalid QR Code';
+      await this.dialog.alert(message);
     }
   }
 
@@ -142,8 +144,10 @@ export class AddAccount implements OnDestroy, AfterViewInit {
         digits: 6,
         period: 30,
       });
-    } catch {
-      await this.dialog.alert('Error adding account');
+    } catch (e: any) {
+      const message =
+        e.message === 'Duplicate account' ? 'This account already exists' : 'Error adding account';
+      await this.dialog.alert(message);
     }
   }
 
@@ -153,17 +157,34 @@ export class AddAccount implements OnDestroy, AfterViewInit {
       .map((l) => l.trim())
       .filter(Boolean);
     let added = 0;
+    let duplicates = 0;
     for (const line of lines) {
       try {
         const parsed = this.totp.parseUrl(line);
         await this.add(parsed);
         added++;
-      } catch {
-        console.warn('Failed to parse line');
+      } catch (e: any) {
+        if (e.message === 'Duplicate account') {
+          duplicates++;
+        }
+        console.warn('Failed to parse or add line:', e.message);
       }
     }
-    if (added === 0) await this.dialog.alert('No valid URLs found');
-    else this.router.navigate(['/']);
+
+    if (added === 0) {
+      if (duplicates > 0) {
+        await this.dialog.alert('All accounts already exist.');
+      } else {
+        await this.dialog.alert('No valid URLs found');
+      }
+    } else {
+      if (duplicates > 0) {
+        // Maybe just navigate if some were added, but could notify
+        this.router.navigate(['/']);
+      } else {
+        this.router.navigate(['/']);
+      }
+    }
   }
 
   isDragging = signal(false);
@@ -210,7 +231,7 @@ export class AddAccount implements OnDestroy, AfterViewInit {
   async processImageFile(file: File) {
     try {
       const result = await QrScanner.scanImage(file);
-      this.handleScanResult(result);
+      await this.handleScanResult(result);
     } catch (e) {
       console.error('QR Decode error:', e);
       await this.dialog.alert('Could not decode QR from image');
