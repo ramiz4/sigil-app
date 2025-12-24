@@ -61,15 +61,44 @@
     <div class="grid grid-cols-3 gap-4">
       @for (key of keys; track key) {
         <button
-          (click)="key === 'delete' ? handleDelete() : key !== '' && handleKey(key)"
+          (click)="
+            key === 'delete'
+              ? handleDelete()
+              : key === 'biometric'
+                ? handleBiometric()
+                : key !== '' && handleKey(key)
+          "
           class="flex h-16 w-16 items-center justify-center rounded-full text-xl font-medium transition-all active:scale-95 active:bg-surface"
           [class.invisible]="key === ''"
-          [class.text-text-main]="key !== 'delete'"
+          [class.text-text-main]="key !== 'delete' && key !== 'biometric'"
+          [class.text-primary]="key === 'biometric'"
           [class.text-text-secondary]="key === 'delete'"
           [class.hover:bg-surface]="key !== ''"
         >
-          @if (key !== 'delete') {
+          @if (key !== 'delete' && key !== 'biometric') {
             <ng-container>{{ key }}</ng-container>
+          }
+          @if (key === 'biometric') {
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M12 10a2 2 0 0 0-2 2" />
+              <path d="M7 10.1a5 5 0 0 1 7-3.9" />
+              <path d="M22 10.3a10 10 0 0 0-15-5.4" />
+              <path d="M2 13.1a10 10 0 0 1 15-5.5" />
+              <path d="M14 13.1a5 5 0 0 1-7 3.9" />
+              <path d="M12 22a2 2 0 0 1-2-2" />
+              <path d="M17 21.3a10 10 0 0 1-15-5.4" />
+              <path d="M22 13.1a10 10 0 0 0-15 5.5" />
+            </svg>
           }
           @if (key === 'delete') {
             <svg

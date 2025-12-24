@@ -77,4 +77,17 @@ export class Settings {
   onPINSet() {
     this.showPINSetup.set(false);
   }
+
+  async toggleBiometric() {
+    if (this.security.isBiometricEnabled()) {
+      this.security.disableBiometric();
+    } else {
+      const success = await this.security.enableBiometric();
+      if (!success) {
+        alert(
+          'Could not enable biometric authentication. Please ensure you have it configured on your device.',
+        );
+      }
+    }
+  }
 }

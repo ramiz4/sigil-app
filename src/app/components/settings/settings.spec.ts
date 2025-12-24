@@ -18,6 +18,11 @@ class MockSecurityService {
   hasPIN = vi.fn().mockReturnValue(true);
   setPIN = vi.fn().mockResolvedValue(undefined);
   verifyPIN = vi.fn().mockResolvedValue(true);
+  isBiometricSupported = vi.fn().mockReturnValue(true);
+  isBiometricEnabled = signal(false).asReadonly();
+  enableBiometric = vi.fn().mockResolvedValue(true);
+  disableBiometric = vi.fn();
+  authenticateBiometric = vi.fn().mockResolvedValue(true);
 }
 
 describe('Settings', () => {
