@@ -73,6 +73,11 @@ export class TotpService {
     await this.loadAccounts();
   }
 
+  async deleteAccounts(ids: string[]) {
+    await this.storage.deleteAccounts(ids);
+    await this.loadAccounts();
+  }
+
   async reorderAccount(id: string, newIndex: number) {
     const accounts = [...this.accountsSignal()];
     const currentIndex = accounts.findIndex((a) => a.id === id);
