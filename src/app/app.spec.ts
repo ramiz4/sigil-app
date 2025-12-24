@@ -5,6 +5,7 @@ import { App } from './app';
 
 describe('App', () => {
   beforeEach(async () => {
+    localStorage.clear();
     await TestBed.configureTestingModule({
       imports: [App],
       providers: [provideRouter([])],
@@ -19,15 +20,21 @@ describe('App', () => {
 
   it('should render title', async () => {
     const fixture = TestBed.createComponent(App);
+    const security = fixture.componentInstance.security;
+    vi.spyOn(security, 'isUnlocked').mockReturnValue(true);
     fixture.detectChanges();
+
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('[data-test="app-title"]')?.textContent).toContain('Sigil');
+    const titleElement = compiled.querySelector('[data-test="app-title"]');
+    expect(titleElement).toBeTruthy();
+    expect(titleElement?.textContent).toContain('Sigil');
   });
 
   it('should show lock button when PIN is set', async () => {
     const fixture = TestBed.createComponent(App);
     const security = fixture.componentInstance.security;
     vi.spyOn(security, 'hasPIN').mockReturnValue(true);
+    vi.spyOn(security, 'isUnlocked').mockReturnValue(true);
     fixture.detectChanges();
 
     const compiled = fixture.nativeElement as HTMLElement;
@@ -39,6 +46,7 @@ describe('App', () => {
     const fixture = TestBed.createComponent(App);
     const security = fixture.componentInstance.security;
     vi.spyOn(security, 'hasPIN').mockReturnValue(false);
+    vi.spyOn(security, 'isUnlocked').mockReturnValue(true);
     fixture.detectChanges();
 
     const compiled = fixture.nativeElement as HTMLElement;
@@ -50,11 +58,13 @@ describe('App', () => {
     const fixture = TestBed.createComponent(App);
     const security = fixture.componentInstance.security;
     vi.spyOn(security, 'hasPIN').mockReturnValue(true);
+    vi.spyOn(security, 'isUnlocked').mockReturnValue(true);
     const lockSpy = vi.spyOn(security, 'lock');
     fixture.detectChanges();
 
     const compiled = fixture.nativeElement as HTMLElement;
     const lockButton = compiled.querySelector('[data-test="lock-button"]') as HTMLButtonElement;
+    expect(lockButton).toBeTruthy();
     lockButton.click();
 
     expect(lockSpy).toHaveBeenCalled();
