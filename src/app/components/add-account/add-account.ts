@@ -125,10 +125,12 @@ export class AddAccount implements OnDestroy, AfterViewInit {
     try {
       const parsed = this.totp.parseUrl(text);
       await this.add(parsed);
-    } catch (e: any) {
+    } catch (e: unknown) {
       console.error(e);
       const message =
-        e.message === 'Duplicate account' ? 'This account already exists' : 'Invalid QR Code';
+        e instanceof Error && e.message === 'Duplicate account'
+          ? 'This account already exists'
+          : 'Invalid QR Code';
       await this.dialog.alert(message);
     }
   }
@@ -144,9 +146,11 @@ export class AddAccount implements OnDestroy, AfterViewInit {
         digits: 6,
         period: 30,
       });
-    } catch (e: any) {
+    } catch (e: unknown) {
       const message =
-        e.message === 'Duplicate account' ? 'This account already exists' : 'Error adding account';
+        e instanceof Error && e.message === 'Duplicate account'
+          ? 'This account already exists'
+          : 'Error adding account';
       await this.dialog.alert(message);
     }
   }
@@ -163,11 +167,11 @@ export class AddAccount implements OnDestroy, AfterViewInit {
         const parsed = this.totp.parseUrl(line);
         await this.add(parsed);
         added++;
-      } catch (e: any) {
-        if (e.message === 'Duplicate account') {
+      } catch (e: unknown) {
+        if (e instanceof Error && e.message === 'Duplicate account') {
           duplicates++;
         }
-        console.warn('Failed to parse or add line:', e.message);
+        console.warn('Failed to parse or add line:', e instanceof Error ? e.message : e);
       }
     }
 
