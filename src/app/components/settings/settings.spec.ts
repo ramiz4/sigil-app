@@ -14,6 +14,20 @@ describe('Settings', () => {
   let fixture: ComponentFixture<Settings>;
 
   beforeEach(async () => {
+    Object.defineProperty(window, 'matchMedia', {
+      writable: true,
+      value: (query: any) => ({
+        matches: false,
+        media: query,
+        onchange: null,
+        addListener: () => { }, // Deprecated
+        removeListener: () => { }, // Deprecated
+        addEventListener: () => { },
+        removeEventListener: () => { },
+        dispatchEvent: () => false,
+      })
+    });
+
     await TestBed.configureTestingModule({
       imports: [Settings],
       providers: [

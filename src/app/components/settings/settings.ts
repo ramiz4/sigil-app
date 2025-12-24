@@ -4,11 +4,12 @@ import { RouterLink } from '@angular/router';
 import { BackupService } from '../../services/backup.service';
 import { SecurityService } from '../../services/security.service';
 import { LockComponent } from '../lock/lock';
+import { ThemeToggle } from '../theme-toggle';
 
 @Component({
   selector: 'app-settings',
   standalone: true,
-  imports: [CommonModule, RouterLink, LockComponent],
+  imports: [CommonModule, RouterLink, LockComponent, ThemeToggle],
   templateUrl: './settings.html',
 })
 export class Settings {
@@ -17,13 +18,7 @@ export class Settings {
 
   showPINSetup = signal(false);
 
-  toggleTheme() {
-    const root = document.documentElement;
-    const current = root.getAttribute('data-theme');
-    const next = current === 'dark' ? 'light' : 'dark';
-    root.setAttribute('data-theme', next);
-    localStorage.setItem('theme', next);
-  }
+
 
   async exportBackup() {
     const password = prompt('Enter a password to encrypt your backup (Important: Do not lose this!):');
