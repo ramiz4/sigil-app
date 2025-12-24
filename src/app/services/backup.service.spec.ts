@@ -119,7 +119,7 @@ describe('BackupService', () => {
 
   it('should include all accounts even if some are missing created field', async () => {
     // Setup
-    const testAccounts: any[] = [
+    const testAccounts: Account[] = [
       {
         id: '1',
         issuer: 'Google',
@@ -141,7 +141,7 @@ describe('BackupService', () => {
         period: 30,
         type: 'totp',
         // missing created
-      },
+      } as unknown as Account,
     ];
     mockStorage.accounts = testAccounts;
 

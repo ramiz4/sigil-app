@@ -112,8 +112,7 @@ export class BackupService {
       );
 
       if (!exists) {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { id, created, ...rest } = acc as any;
+        const { id: _, created: __, ...rest } = acc;
         await this.storage.addAccount({
           ...rest,
           type: rest.type || 'totp',
