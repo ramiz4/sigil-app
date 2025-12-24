@@ -49,4 +49,51 @@ describe('AddAccount', () => {
       folder: 'Work'
     }));
   });
+
+  it('should handle drag over events', () => {
+    const mockEvent = {
+      preventDefault: vi.fn(),
+      stopPropagation: vi.fn()
+    } as unknown as DragEvent;
+
+    component.onDragOver(mockEvent);
+
+    expect(mockEvent.preventDefault).toHaveBeenCalled();
+    expect(mockEvent.stopPropagation).toHaveBeenCalled();
+    expect(component.isDragging()).toBe(true);
+  });
+
+  it('should handle drag leave events', () => {
+    const mockEvent = {
+      preventDefault: vi.fn(),
+      stopPropagation: vi.fn()
+    } as unknown as DragEvent;
+
+    component.isDragging.set(true);
+    component.onDragLeave(mockEvent);
+
+    expect(mockEvent.preventDefault).toHaveBeenCalled();
+    expect(mockEvent.stopPropagation).toHaveBeenCalled();
+    expect(component.isDragging()).toBe(false);
+  });
+
+  it('should process file on drop', () => {
+    const processSpy = vi.spyOn(component, 'processImageFile').mockImplementation(async () => { });
+    const mockFile = new File([''], 'qr.png', { type: 'image/png' });
+
+    const mockEvent = {
+      preventDefault: vi.fn(),
+      stopPropagation: vi.fn(),
+      dataTransfer: {
+        files: [mockFile]
+      }
+    } as unknown as DragEvent;
+
+    component.onDrop(mockEvent);
+
+    expect(mockEvent.preventDefault).toHaveBeenCalled();
+    expect(mockEvent.stopPropagation).toHaveBeenCalled();
+    expect(processSpy).toHaveBeenCalledWith(mockFile);
+    expect(component.isDragging()).toBe(false);
+  });
 });

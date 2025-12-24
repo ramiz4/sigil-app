@@ -135,11 +135,38 @@ export class AddAccount implements OnDestroy {
     else this.router.navigate(['/']);
   }
 
+  isDragging = signal(false);
+
+  onDragOver(event: DragEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDragging.set(true);
+  }
+
+  onDragLeave(event: DragEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDragging.set(false);
+  }
+
+  onDrop(event: DragEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDragging.set(false);
+
+    const files = event.dataTransfer?.files;
+    if (files && files.length > 0) {
+      this.processImageFile(files[0]);
+    }
+  }
+
   async onFileSelected(event: Event) {
     const input = event.target as HTMLInputElement;
     if (!input.files?.length) return;
-    const file = input.files[0];
+    this.processImageFile(input.files[0]);
+  }
 
+  async processImageFile(file: File) {
     // Create a new reader just for image
     const reader = new BrowserQRCodeReader(); // Helper instance
     try {
