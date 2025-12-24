@@ -57,7 +57,11 @@ export class AddAccount implements OnDestroy, AfterViewInit {
   async startScan() {
     this.scanError = '';
 
-    if (!window.isSecureContext) {
+    const isTauri =
+      typeof window !== 'undefined' &&
+      (window as unknown as { __TAURI_INTERNALS__?: unknown }).__TAURI_INTERNALS__ !== undefined;
+
+    if (!window.isSecureContext && !isTauri) {
       this.scanError =
         'Camera requires a secure connection (HTTPS). Please use HTTPS or localhost to scan.';
       return;
@@ -82,7 +86,7 @@ export class AddAccount implements OnDestroy, AfterViewInit {
             this.stopScan();
           },
           {
-            preferredCamera: 'environment',
+            preferredCamera: isTauri ? undefined : 'environment',
             highlightScanRegion: true,
             highlightCodeOutline: true,
           },

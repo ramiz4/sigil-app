@@ -30,7 +30,7 @@ The following bugs are present only in the desktop version of the app:
     4. Drag and drop the image
     5. See the image uploaded
 
-## 4. On the Add Account screen, on the Scan QR code tab, it should be able to scan the QR code.
+## 4. [Resolved] On the Add Account screen, on the Scan QR code tab, it should be able to scan the QR code.
 
 ### Steps to Reproduce
 
