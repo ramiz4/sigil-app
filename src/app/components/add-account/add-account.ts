@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { TotpService } from '../../services/totp.service';
-import { BrowserQRCodeReader, IScannerControls } from '@zxing/browser';
+import QrScanner from 'qr-scanner';
 import { DialogService } from '../../services/dialog.service';
 
 type Mode = 'scan' | 'manual' | 'image' | 'paste';
@@ -33,9 +33,8 @@ export class AddAccount implements OnDestroy {
 
   // Scan
   @ViewChild('video') videoElem!: ElementRef<HTMLVideoElement>;
-  codeReader: BrowserQRCodeReader | null = null;
+  qrScanner: QrScanner | null = null;
   scanError = '';
-  private controls: IScannerControls | undefined;
 
   changeMode(m: Mode) {
     this.mode.set(m);
@@ -49,45 +48,40 @@ export class AddAccount implements OnDestroy {
   async startScan() {
     this.scanError = '';
 
-    // Ensure scanner instance
-    if (!this.codeReader) {
-      this.codeReader = new BrowserQRCodeReader();
-    }
+    if (this.videoElem && this.videoElem.nativeElement) {
+      try {
+        if (this.qrScanner) {
+          this.qrScanner.destroy();
+        }
 
-    try {
-      // Check devices
-      const devices = await BrowserQRCodeReader.listVideoInputDevices();
-      if (devices.length === 0) {
-        this.scanError = 'No camera found';
-        return;
-      }
-
-      // Request device access implicitly via decodeFromVideoDevice
-      if (this.videoElem && this.videoElem.nativeElement) {
-        this.controls = await this.codeReader.decodeFromVideoDevice(
-          undefined,
+        this.qrScanner = new QrScanner(
           this.videoElem.nativeElement,
-          (result, err, controls) => {
-            if (result) {
-              this.handleScanResult(result.getText());
-              controls.stop();
-              this.controls = undefined;
-            }
+          (result) => {
+            this.handleScanResult(result.data);
+            this.stopScan();
+          },
+          {
+            preferredCamera: 'environment',
+            highlightScanRegion: true,
+            highlightCodeOutline: true,
           }
         );
-      } else {
-        this.scanError = 'Video element not ready';
+
+        await this.qrScanner.start();
+      } catch (err: any) {
+        this.scanError = 'Camera error: ' + (err.message || err);
+        console.error(err);
       }
-    } catch (err: any) {
-      this.scanError = 'Camera error: ' + (err.message || err);
-      console.error(err);
+    } else {
+      this.scanError = 'Video element not ready';
     }
   }
 
   stopScan() {
-    if (this.controls) {
-      this.controls.stop();
-      this.controls = undefined;
+    if (this.qrScanner) {
+      this.qrScanner.stop();
+      this.qrScanner.destroy();
+      this.qrScanner = null;
     }
   }
 
@@ -179,14 +173,11 @@ export class AddAccount implements OnDestroy {
   }
 
   async processImageFile(file: File) {
-    // Create a new reader just for image
-    const reader = new BrowserQRCodeReader(); // Helper instance
     try {
-      const imageUrl = URL.createObjectURL(file);
-      const result = await reader.decodeFromImageUrl(imageUrl);
-      this.handleScanResult(result.getText());
-      URL.revokeObjectURL(imageUrl);
+      const result = await QrScanner.scanImage(file);
+      this.handleScanResult(result);
     } catch (e) {
+      console.error('QR Decode error:', e);
       await this.dialog.alert('Could not decode QR from image');
     }
   }
