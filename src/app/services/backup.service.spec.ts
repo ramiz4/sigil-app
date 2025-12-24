@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { BackupService } from './backup.service';
 import { Account, StorageService } from './storage.service';
+import { TotpService } from './totp.service';
 
 // Mock StorageService
 class MockStorageService {
@@ -19,9 +20,14 @@ class MockStorageService {
   }
 }
 
+class MockTotpService {
+  loadAccounts = vi.fn();
+}
+
 describe('BackupService', () => {
   let service: BackupService;
   let mockStorage: MockStorageService;
+  let mockTotp: MockTotpService;
 
   beforeAll(() => {
     // Polyfill Blob.prototype.text for JSDOM
@@ -39,8 +45,13 @@ describe('BackupService', () => {
 
   beforeEach(() => {
     mockStorage = new MockStorageService();
+    mockTotp = new MockTotpService();
     TestBed.configureTestingModule({
-      providers: [BackupService, { provide: StorageService, useValue: mockStorage }],
+      providers: [
+        BackupService,
+        { provide: StorageService, useValue: mockStorage },
+        { provide: TotpService, useValue: mockTotp },
+      ],
     });
     service = TestBed.inject(BackupService);
 
@@ -117,6 +128,7 @@ describe('BackupService', () => {
     expect(mockStorage.accounts.length).toBe(2);
     expect(mockStorage.accounts.find((a) => a.issuer === 'Google')?.folder).toBe('Work');
     expect(mockStorage.accounts.find((a) => a.issuer === 'GitHub')?.secret).toBe('SECRET2');
+    expect(mockTotp.loadAccounts).toHaveBeenCalled();
   });
 
   it('should include all accounts even if some are missing created field', async () => {

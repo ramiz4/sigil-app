@@ -1,5 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { Account, StorageService } from './storage.service';
+import { TotpService } from './totp.service';
 
 interface BackupData {
   v: number; // version
@@ -13,6 +14,7 @@ interface BackupData {
 })
 export class BackupService {
   private storage = inject(StorageService);
+  private totp = inject(TotpService);
 
   /**
    * Export all accounts as an encrypted JSON string
@@ -122,6 +124,7 @@ export class BackupService {
         skipped++;
       }
     }
+    await this.totp.loadAccounts();
 
     return { restored, skipped };
   }
