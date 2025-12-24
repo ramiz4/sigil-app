@@ -10,7 +10,15 @@ describe('TotpService', () => {
     TestBed.configureTestingModule({
       providers: [
         TotpService,
-        { provide: StorageService, useValue: { getAccounts: () => Promise.resolve([]) } },
+        {
+          provide: StorageService,
+          useValue: {
+            getAccounts: () => Promise.resolve([]),
+            addAccount: () => Promise.resolve({}),
+            updateAccount: () => Promise.resolve(),
+            deleteAccount: () => Promise.resolve(),
+          },
+        },
       ],
     });
     service = TestBed.inject(TotpService);
@@ -44,6 +52,7 @@ describe('TotpService', () => {
       period: 30,
       created: 0,
       type: 'totp' as const,
+      order: 0,
     };
 
     // Time = 59s. Steps = floor(59/30) = 1.
@@ -68,6 +77,7 @@ describe('TotpService', () => {
       period: 30,
       created: 0,
       type: 'totp' as const,
+      order: 0,
     };
     const result = service['generateForAccount'](account, 1111111109000);
     expect(result.code).toBe('081804');
@@ -75,13 +85,13 @@ describe('TotpService', () => {
   it('should update account and reload', async () => {
     const storage = TestBed.inject(StorageService);
     const updateSpy = vi.fn().mockResolvedValue(undefined);
-    const getSpy = vi.fn().mockResolvedValue([{ id: '1', issuer: 'Updated' }]);
+    const getSpy = vi.fn().mockResolvedValue([{ id: '1', issuer: 'Updated', order: 0 }]);
     storage.updateAccount = updateSpy;
     storage.getAccounts = getSpy;
 
-    await service.updateAccount({ id: '1', issuer: 'Updated' } as Account);
+    await service.updateAccount({ id: '1', issuer: 'Updated', order: 0 } as Account);
 
-    expect(updateSpy).toHaveBeenCalledWith({ id: '1', issuer: 'Updated' });
+    expect(updateSpy).toHaveBeenCalledWith({ id: '1', issuer: 'Updated', order: 0 });
     expect(getSpy).toHaveBeenCalled();
   });
 
@@ -103,5 +113,27 @@ describe('TotpService', () => {
         type: 'totp',
       }),
     ).rejects.toThrow('Duplicate account');
+  });
+  it('should reorder accounts', async () => {
+    const storage = TestBed.inject(StorageService);
+    const accounts = [
+      { id: '1', issuer: 'A', order: 0 } as Account,
+      { id: '2', issuer: 'B', order: 1 } as Account,
+    ];
+    vi.spyOn(storage, 'getAccounts').mockResolvedValue(accounts);
+    const updateSpy = vi.spyOn(storage, 'updateAccount').mockResolvedValue(undefined);
+
+    await service.loadAccounts();
+
+    // Reorder B before A
+    await service.reorderAccount('2', 0);
+
+    expect(updateSpy).toHaveBeenCalledTimes(2);
+    // B should now be 0, A should be 1
+    const calls = updateSpy.mock.calls;
+    const bUpdate = calls.find((c) => c[0].id === '2')![0];
+    const aUpdate = calls.find((c) => c[0].id === '1')![0];
+    expect(bUpdate.order).toBe(0);
+    expect(aUpdate.order).toBe(1);
   });
 });

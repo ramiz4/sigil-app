@@ -29,7 +29,7 @@
       >
     </div>
   } @else {
-    <div class="flex flex-col gap-8">
+    <div class="flex flex-col gap-8" cdkDropListGroup>
       @for (group of groupedCodes(); track group.name) {
         <div>
           @if (group.name) {
@@ -54,7 +54,13 @@
               {{ group.name }}
             </h3>
           }
-          <div class="grid grid-cols-1 gap-4">
+          <div
+            class="grid grid-cols-1 gap-4 min-h-[50px]"
+            cdkDropList
+            [id]="group.name"
+            [cdkDropListData]="group.items"
+            (cdkDropListDropped)="onDrop($event)"
+          >
             @for (item of group.items; track item.account.id) {
               <div
                 class="bg-surface border border-border rounded-lg p-5 relative transition-all cursor-pointer overflow-hidden hover:-translate-y-0.5 hover:shadow-md hover:border-primary active:scale-[0.98]"
@@ -63,7 +69,15 @@
                 tabindex="0"
                 title="Click to copy"
                 role="button"
+                cdkDrag
+                [cdkDragData]="item"
               >
+                <!-- Drag Preview Placeholder -->
+                <div
+                  *cdkDragPlaceholder
+                  class="bg-bg-secondary border-2 border-dashed border-primary rounded-lg h-[140px] mb-4"
+                ></div>
+
                 <div class="flex justify-between items-start mb-4">
                   <div class="flex flex-col">
                     <span class="font-semibold text-base text-text-main leading-tight">{{

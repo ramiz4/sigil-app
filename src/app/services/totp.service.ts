@@ -45,7 +45,7 @@ export class TotpService {
     this.accountsSignal.set(accounts);
   }
 
-  async addAccount(accountData: Omit<Account, 'id' | 'created'>) {
+  async addAccount(accountData: Omit<Account, 'id' | 'created' | 'order'>) {
     // Check for duplicates? MVP warning/skip can be done in UI logic or here.
     // For now simple add.
     const exists = this.accountsSignal().find(
@@ -70,6 +70,26 @@ export class TotpService {
 
   async deleteAccount(id: string) {
     await this.storage.deleteAccount(id);
+    await this.loadAccounts();
+  }
+
+  async reorderAccount(id: string, newIndex: number) {
+    const accounts = [...this.accountsSignal()];
+    const currentIndex = accounts.findIndex((a) => a.id === id);
+    if (currentIndex === -1) return;
+
+    const [account] = accounts.splice(currentIndex, 1);
+    accounts.splice(newIndex, 0, account);
+
+    // Update all orders
+    const updates = accounts.map((a, index) => {
+      if (a.order !== index) {
+        return this.storage.updateAccount({ ...a, order: index });
+      }
+      return Promise.resolve();
+    });
+
+    await Promise.all(updates);
     await this.loadAccounts();
   }
 

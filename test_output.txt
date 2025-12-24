@@ -1,0 +1,43 @@
+
+ RUN  v4.0.16 /Users/ramizloki/IdeaProjects/sigil-app
+
+ ❯ src/app/services/totp.service.spec.ts (8 tests | 8 failed) 4ms
+     × should parse valid otpauth URL 2ms
+     × should throw on invalid URL 0ms
+     × should throw "Only TOTP supported" for non-totp URLs 0ms
+     × should generate correct RFC 6238 code (SHA1) 0ms
+     × should generate correct RFC 6238 code (SHA1) at time 1111111109 0ms
+     × should update account and reload 0ms
+     × should throw error when adding duplicate account 0ms
+     × should reorder accounts 0ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 8 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/app/services/totp.service.spec.ts > TotpService > should parse valid otpauth URL
+ FAIL  src/app/services/totp.service.spec.ts > TotpService > should throw on invalid URL
+ FAIL  src/app/services/totp.service.spec.ts > TotpService > should throw "Only TOTP supported" for non-totp URLs
+ FAIL  src/app/services/totp.service.spec.ts > TotpService > should generate correct RFC 6238 code (SHA1)
+ FAIL  src/app/services/totp.service.spec.ts > TotpService > should generate correct RFC 6238 code (SHA1) at time 1111111109
+ FAIL  src/app/services/totp.service.spec.ts > TotpService > should update account and reload
+ FAIL  src/app/services/totp.service.spec.ts > TotpService > should throw error when adding duplicate account
+ FAIL  src/app/services/totp.service.spec.ts > TotpService > should reorder accounts
+Error: Need to call TestBed.initTestEnvironment() first
+ ❯ TestBedImpl.get compiler [as compiler] node_modules/.pnpm/@angular+core@21.0.6_@angular+compiler@21.0.6_rxjs@7.8.2/node_modules/@angular/core/fesm2022/testing.mjs:1486:13
+ ❯ TestBedImpl.configureTestingModule node_modules/.pnpm/@angular+core@21.0.6_@angular+compiler@21.0.6_rxjs@7.8.2/node_modules/@angular/core/fesm2022/testing.mjs:1402:10
+ ❯ Function.configureTestingModule node_modules/.pnpm/@angular+core@21.0.6_@angular+compiler@21.0.6_rxjs@7.8.2/node_modules/@angular/core/fesm2022/testing.mjs:1273:33
+ ❯ src/app/services/totp.service.spec.ts:10:13
+      8| 
+      9|   beforeEach(() => {
+     10|     TestBed.configureTestingModule({
+       |             ^
+     11|       providers: [
+     12|         TotpService,
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/8]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  8 failed (8)
+   Start at  18:38:23
+   Duration  203ms (transform 36ms, setup 0ms, import 126ms, tests 4ms, environment 0ms)
+
