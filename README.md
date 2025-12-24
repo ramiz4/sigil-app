@@ -59,4 +59,4 @@ pnpm tauri build
 - [x] Add a Lock button to lock the app (pin)
 - [x] Generate a new favicon and replace the default angular favicon
 - [x] Click on the OTP Code should copy the code to clipboard
-- [ ] Add account -> Upload image via drag and drop
+- [x] Add account -> Upload image via drag and drop
