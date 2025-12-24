@@ -16,9 +16,7 @@
         <h3 class="mt-0 mb-4">Appearance</h3>
         <div class="flex items-center justify-between">
             <span>Theme</span>
-            <button (click)="toggleTheme()"
-                class="inline-flex items-center justify-center px-4 py-2 rounded-md font-medium cursor-pointer transition-all bg-surface text-text-main border border-border hover:bg-bg">Switch
-                Mode</button>
+            <app-theme-toggle></app-theme-toggle>
         </div>
     </div>
 
@@ -44,10 +42,10 @@
     </div>
 
     <!-- PIN Setup Modal -->
-    <div *ngIf="showPINSetup()" class="fixed inset-0 z-[200]">
+    <div *ngIf="showPINSetup()" class="fixed inset-0 z-200">
         <app-lock mode="set" (unlocked)="onPINSet()"></app-lock>
         <button (click)="showPINSetup.set(false)"
-            class="fixed top-6 right-6 z-[201] p-2 text-text-secondary hover:text-text-main transition-colors">
+            class="fixed top-6 right-6 z-201 p-2 text-text-secondary hover:text-text-main transition-colors">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
                 stroke="currentColor" class="w-6 h-6">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -93,6 +91,6 @@
     </div>
 
     <div class="text-center text-text-secondary mt-4 text-sm">
-        Sigil v0.1.0 MVP
+        Sigil v{{ version }}
     </div>
 </div>
