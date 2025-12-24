@@ -12,6 +12,8 @@ permissions:
 jobs:
   version:
     runs-on: ubuntu-latest
+    outputs:
+      tag_created: ${{ steps.create_tag.outputs.created }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -43,9 +45,11 @@ jobs:
           # Check if tag exists
           if git rev-parse "$TAG" >/dev/null 2>&1; then
             echo "Tag $TAG already exists, skipping creation."
+            echo "created=false" >> $GITHUB_OUTPUT
           else
             git tag $TAG
             git push origin $TAG
+            echo "created=true" >> $GITHUB_OUTPUT
           fi
 
   build-and-deploy:
@@ -89,6 +93,7 @@ jobs:
 
   build-tauri:
     needs: version
+    if: needs.version.outputs.tag_created == 'true'
     permissions:
       contents: write
     strategy:
