@@ -5,6 +5,7 @@ import { BackupService } from '../../services/backup.service';
 import { SecurityService } from '../../services/security.service';
 import { LockComponent } from '../lock/lock';
 import { ThemeToggle } from '../theme-toggle';
+import packageJson from '@package-json';
 
 @Component({
   selector: 'app-settings',
@@ -17,6 +18,7 @@ export class Settings {
   public security = inject(SecurityService);
 
   showPINSetup = signal(false);
+  version = packageJson.version;
 
 
 
