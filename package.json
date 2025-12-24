@@ -14,6 +14,14 @@
     "lint": "eslint .",
     "format": "prettier --write ."
   },
+  "lint-staged": {
+    "*.{js,ts,html,css,scss,json,md}": [
+      "prettier --write"
+    ],
+    "*.{ts,html}": [
+      "eslint --fix"
+    ]
+  },
   "private": true,
   "packageManager": "pnpm@10.18.2",
   "dependencies": {
@@ -57,6 +65,7 @@
     "eslint-plugin-prettier": "^5.5.4",
     "husky": "^9.1.7",
     "jsdom": "^27.1.0",
+    "lint-staged": "^16.2.7",
     "playwright": "^1.57.0",
     "postcss": "^8.5.6",
     "prettier": "^3.7.4",
