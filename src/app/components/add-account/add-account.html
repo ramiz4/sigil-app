@@ -28,22 +28,22 @@
 
     <div class="flex gap-2 mb-4 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         <button
-            class="px-4 py-2 rounded-md border border-transparent bg-transparent text-text-secondary cursor-pointer whitespace-nowrap font-medium hover:bg-bg transition-all"
+            class="px-4 py-2 rounded-md border border-transparent text-text-secondary cursor-pointer whitespace-nowrap font-medium transition-all"
             [class.bg-surface]="mode() === 'scan'" [class.text-primary]="mode() === 'scan'"
             [class.border-border]="mode() === 'scan'" [class.shadow-sm]="mode() === 'scan'"
             (click)="changeMode('scan')">Scan QR</button>
         <button
-            class="px-4 py-2 rounded-md border border-transparent bg-transparent text-text-secondary cursor-pointer whitespace-nowrap font-medium hover:bg-bg transition-all"
+            class="px-4 py-2 rounded-md border border-transparent text-text-secondary cursor-pointer whitespace-nowrap font-medium transition-all"
             [class.bg-surface]="mode() === 'manual'" [class.text-primary]="mode() === 'manual'"
             [class.border-border]="mode() === 'manual'" [class.shadow-sm]="mode() === 'manual'"
             (click)="changeMode('manual')">Manual</button>
         <button
-            class="px-4 py-2 rounded-md border border-transparent bg-transparent text-text-secondary cursor-pointer whitespace-nowrap font-medium hover:bg-bg transition-all"
+            class="px-4 py-2 rounded-md border border-transparent text-text-secondary cursor-pointer whitespace-nowrap font-medium transition-all"
             [class.bg-surface]="mode() === 'image'" [class.text-primary]="mode() === 'image'"
             [class.border-border]="mode() === 'image'" [class.shadow-sm]="mode() === 'image'"
             (click)="changeMode('image')">Image</button>
         <button
-            class="px-4 py-2 rounded-md border border-transparent bg-transparent text-text-secondary cursor-pointer whitespace-nowrap font-medium hover:bg-bg transition-all"
+            class="px-4 py-2 rounded-md border border-transparent text-text-secondary cursor-pointer whitespace-nowrap font-medium transition-all"
             [class.bg-surface]="mode() === 'paste'" [class.text-primary]="mode() === 'paste'"
             [class.border-border]="mode() === 'paste'" [class.shadow-sm]="mode() === 'paste'"
             (click)="changeMode('paste')">Paste</button>
