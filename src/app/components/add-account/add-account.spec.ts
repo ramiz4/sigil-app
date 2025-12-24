@@ -2,12 +2,31 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AddAccount } from './add-account';
 import { TotpService } from '../../services/totp.service';
+import { DialogService } from '../../services/dialog.service';
 import { provideRouter } from '@angular/router';
 
 class MockTotpService {
   async addAccount(data: any) { }
   parseUrl(url: string) { return {}; }
 }
+
+class MockDialogService {
+  alert = vi.fn().mockResolvedValue(undefined);
+  confirm = vi.fn().mockResolvedValue(true);
+  prompt = vi.fn().mockResolvedValue('');
+}
+
+vi.mock('qr-scanner', () => {
+  return {
+    default: class {
+      static hasCamera = vi.fn().mockResolvedValue(true);
+      static scanImage = vi.fn().mockResolvedValue('otpauth://totp/Example:user?secret=ABC');
+      start = vi.fn().mockResolvedValue(undefined);
+      stop = vi.fn();
+      destroy = vi.fn();
+    }
+  };
+});
 
 describe('AddAccount', () => {
   let component: AddAccount;
@@ -18,14 +37,23 @@ describe('AddAccount', () => {
       imports: [AddAccount],
       providers: [
         provideRouter([]),
-        { provide: TotpService, useClass: MockTotpService }
+        { provide: TotpService, useClass: MockTotpService },
+        { provide: DialogService, useClass: MockDialogService }
       ]
     })
       .compileComponents();
 
     fixture = TestBed.createComponent(AddAccount);
     component = fixture.componentInstance;
-    await fixture.whenStable();
+
+    // Mock secure context
+    Object.defineProperty(window, 'isSecureContext', {
+      value: true,
+      writable: true
+    });
+
+    // We don't call fixture.detectChanges() immediately if we want to spy on methods before ngOnInit/ngAfterViewInit
+    // but in this case, ngAfterViewInit runs after change detection.
   });
 
   it('should create', () => {

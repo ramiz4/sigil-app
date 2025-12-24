@@ -1,9 +1,10 @@
-import { Component, ElementRef, ViewChild, signal, inject, OnDestroy } from '@angular/core';
+import { Component, ElementRef, ViewChild, signal, inject, OnDestroy, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { TotpService } from '../../services/totp.service';
-import { BrowserQRCodeReader, IScannerControls } from '@zxing/browser';
+import QrScanner from 'qr-scanner';
+import { DialogService } from '../../services/dialog.service';
 
 type Mode = 'scan' | 'manual' | 'image' | 'paste';
 
@@ -12,9 +13,10 @@ type Mode = 'scan' | 'manual' | 'image' | 'paste';
   imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './add-account.html',
 })
-export class AddAccount implements OnDestroy {
+export class AddAccount implements OnDestroy, AfterViewInit {
   totp = inject(TotpService);
   router = inject(Router);
+  dialog = inject(DialogService);
 
   mode = signal<Mode>('scan');
   targetFolder = signal('');
@@ -31,9 +33,8 @@ export class AddAccount implements OnDestroy {
 
   // Scan
   @ViewChild('video') videoElem!: ElementRef<HTMLVideoElement>;
-  codeReader: BrowserQRCodeReader | null = null;
+  qrScanner: QrScanner | null = null;
   scanError = '';
-  private controls: IScannerControls | undefined;
 
   changeMode(m: Mode) {
     this.mode.set(m);
@@ -47,50 +48,62 @@ export class AddAccount implements OnDestroy {
   async startScan() {
     this.scanError = '';
 
-    // Ensure scanner instance
-    if (!this.codeReader) {
-      this.codeReader = new BrowserQRCodeReader();
+    if (!window.isSecureContext) {
+      this.scanError = 'Camera requires a secure connection (HTTPS). Please use HTTPS or localhost to scan.';
+      return;
     }
 
-    try {
-      // Check devices
-      const devices = await BrowserQRCodeReader.listVideoInputDevices();
-      if (devices.length === 0) {
-        this.scanError = 'No camera found';
-        return;
-      }
+    if (this.videoElem && this.videoElem.nativeElement) {
+      try {
+        const hasCamera = await QrScanner.hasCamera();
+        if (!hasCamera) {
+          this.scanError = 'No camera found on this device.';
+          return;
+        }
 
-      // Request device access implicitly via decodeFromVideoDevice
-      if (this.videoElem && this.videoElem.nativeElement) {
-        this.controls = await this.codeReader.decodeFromVideoDevice(
-          undefined,
+        if (this.qrScanner) {
+          this.qrScanner.destroy();
+        }
+
+        this.qrScanner = new QrScanner(
           this.videoElem.nativeElement,
-          (result, err, controls) => {
-            if (result) {
-              this.handleScanResult(result.getText());
-              controls.stop();
-              this.controls = undefined;
-            }
+          (result) => {
+            this.handleScanResult(result.data);
+            this.stopScan();
+          },
+          {
+            preferredCamera: 'environment',
+            highlightScanRegion: true,
+            highlightCodeOutline: true,
           }
         );
-      } else {
-        this.scanError = 'Video element not ready';
+
+        await this.qrScanner.start();
+      } catch (err: any) {
+        this.scanError = 'Camera error: ' + (err.message || err);
+        console.error(err);
       }
-    } catch (err: any) {
-      this.scanError = 'Camera error: ' + (err.message || err);
-      console.error(err);
+    } else {
+      this.scanError = 'Video element not ready';
     }
   }
 
   stopScan() {
-    if (this.controls) {
-      this.controls.stop();
-      this.controls = undefined;
+    if (this.qrScanner) {
+      this.qrScanner.stop();
+      this.qrScanner.destroy();
+      this.qrScanner = null;
     }
   }
 
   ngOnDestroy() {
     this.stopScan();
+  }
+
+  ngAfterViewInit() {
+    if (this.mode() === 'scan') {
+      this.startScan();
+    }
   }
 
   async handleScanResult(text: string) {
@@ -99,7 +112,7 @@ export class AddAccount implements OnDestroy {
       await this.add(parsed);
     } catch (e) {
       console.error(e);
-      alert('Invalid QR Code');
+      await this.dialog.alert('Invalid QR Code');
     }
   }
 
@@ -115,7 +128,7 @@ export class AddAccount implements OnDestroy {
         period: 30
       });
     } catch (e) {
-      alert('Error adding account');
+      await this.dialog.alert('Error adding account');
     }
   }
 
@@ -131,7 +144,7 @@ export class AddAccount implements OnDestroy {
         console.warn('Failed to parse line');
       }
     }
-    if (added === 0) alert('No valid URLs found');
+    if (added === 0) await this.dialog.alert('No valid URLs found');
     else this.router.navigate(['/']);
   }
 
@@ -140,6 +153,9 @@ export class AddAccount implements OnDestroy {
   onDragOver(event: DragEvent) {
     event.preventDefault();
     event.stopPropagation();
+    if (event.dataTransfer) {
+      event.dataTransfer.dropEffect = 'copy';
+    }
     this.isDragging.set(true);
   }
 
@@ -157,6 +173,13 @@ export class AddAccount implements OnDestroy {
     const files = event.dataTransfer?.files;
     if (files && files.length > 0) {
       this.processImageFile(files[0]);
+    } else if (event.dataTransfer?.items) {
+      // Fallback for some environments
+      const item = Array.from(event.dataTransfer.items).find(i => i.kind === 'file');
+      const file = item?.getAsFile();
+      if (file) {
+        this.processImageFile(file);
+      }
     }
   }
 
@@ -167,15 +190,12 @@ export class AddAccount implements OnDestroy {
   }
 
   async processImageFile(file: File) {
-    // Create a new reader just for image
-    const reader = new BrowserQRCodeReader(); // Helper instance
     try {
-      const imageUrl = URL.createObjectURL(file);
-      const result = await reader.decodeFromImageUrl(imageUrl);
-      this.handleScanResult(result.getText());
-      URL.revokeObjectURL(imageUrl);
+      const result = await QrScanner.scanImage(file);
+      this.handleScanResult(result);
     } catch (e) {
-      alert('Could not decode QR from image');
+      console.error('QR Decode error:', e);
+      await this.dialog.alert('Could not decode QR from image');
     }
   }
 

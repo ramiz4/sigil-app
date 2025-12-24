@@ -3,6 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Dashboard } from './dashboard';
 import { TotpService } from '../../services/totp.service';
 import { ToastService } from '../../services/toast.service';
+import { DialogService } from '../../services/dialog.service';
 import { signal } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { By } from '@angular/platform-browser';
@@ -18,6 +19,12 @@ class MockToastService {
   error(message: string) { }
 }
 
+class MockDialogService {
+  confirm = vi.fn();
+  prompt = vi.fn();
+  alert = vi.fn();
+}
+
 describe('Dashboard', () => {
   let component: Dashboard;
   let fixture: ComponentFixture<Dashboard>;
@@ -29,7 +36,8 @@ describe('Dashboard', () => {
       providers: [
         provideRouter([]),
         { provide: TotpService, useClass: MockTotpService },
-        { provide: ToastService, useClass: MockToastService }
+        { provide: ToastService, useClass: MockToastService },
+        { provide: DialogService, useClass: MockDialogService }
       ]
     })
       .compileComponents();
@@ -108,5 +116,54 @@ describe('Dashboard', () => {
 
     expect(writeTextMock).toHaveBeenCalledWith('999999');
     expect(toastSpy).toHaveBeenCalledWith('Code copied to clipboard');
+  });
+
+  it('should call deleteAccount when confirmed', async () => {
+    const mockService = TestBed.inject(TotpService) as unknown as MockTotpService;
+    const dialogService = TestBed.inject(DialogService) as unknown as MockDialogService;
+    const deleteSpy = vi.spyOn(mockService, 'deleteAccount');
+    dialogService.confirm.mockResolvedValue(true);
+
+    await component.delete('1');
+
+    expect(deleteSpy).toHaveBeenCalledWith('1');
+  });
+
+  it('should not call deleteAccount when cancelled', async () => {
+    const mockService = TestBed.inject(TotpService) as unknown as MockTotpService;
+    const dialogService = TestBed.inject(DialogService) as unknown as MockDialogService;
+    const deleteSpy = vi.spyOn(mockService, 'deleteAccount');
+    dialogService.confirm.mockResolvedValue(false);
+
+    await component.delete('1');
+
+    expect(deleteSpy).not.toHaveBeenCalled();
+  });
+
+  it('should call updateAccount with new folder when prompted', async () => {
+    const mockService = TestBed.inject(TotpService) as unknown as MockTotpService;
+    const dialogService = TestBed.inject(DialogService) as unknown as MockDialogService;
+    const updateSpy = vi.spyOn(mockService, 'updateAccount');
+    const account = { id: '1', issuer: 'Test', folder: 'Old' };
+    dialogService.prompt.mockResolvedValue('New Folder');
+
+    await component.editFolder(account as any);
+
+    expect(updateSpy).toHaveBeenCalledWith(expect.objectContaining({
+      id: '1',
+      folder: 'New Folder'
+    }));
+  });
+
+  it('should not call updateAccount when prompt is cancelled', async () => {
+    const mockService = TestBed.inject(TotpService) as unknown as MockTotpService;
+    const dialogService = TestBed.inject(DialogService) as unknown as MockDialogService;
+    const updateSpy = vi.spyOn(mockService, 'updateAccount');
+    const account = { id: '1', issuer: 'Test', folder: 'Old' };
+    dialogService.prompt.mockResolvedValue(null);
+
+    await component.editFolder(account as any);
+
+    expect(updateSpy).not.toHaveBeenCalled();
   });
 });

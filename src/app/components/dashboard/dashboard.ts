@@ -4,6 +4,7 @@ import { RouterLink } from '@angular/router';
 import { TotpService, TotpDisplay } from '../../services/totp.service';
 import { Account } from '../../services/storage.service';
 import { ToastService } from '../../services/toast.service';
+import { DialogService } from '../../services/dialog.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -13,6 +14,7 @@ import { ToastService } from '../../services/toast.service';
 export class Dashboard {
   totp = inject(TotpService);
   toast = inject(ToastService);
+  dialog = inject(DialogService);
 
   codes = this.totp.displayCodes;
 
@@ -53,7 +55,7 @@ export class Dashboard {
   }
 
   async editFolder(account: Account) {
-    const newFolder = prompt('Enter folder name for this account:', account.folder || '');
+    const newFolder = await this.dialog.prompt('Enter folder name for this account:', account.folder || '', 'Edit Folder');
     if (newFolder !== null) {
       await this.totp.updateAccount({
         ...account,
@@ -62,8 +64,8 @@ export class Dashboard {
     }
   }
 
-  delete(id: string) {
-    if (confirm('Delete this account?')) {
+  async delete(id: string) {
+    if (await this.dialog.confirm('Delete this account?', 'Delete Account')) {
       this.totp.deleteAccount(id);
     }
   }

@@ -18,15 +18,18 @@ The name **Sigil** refers to an inscribed symbol believed to have magical power.
 - Node.js (v18+)
 - pnpm
 - Rust (for Tauri desktop build)
+- Rust (for Tauri desktop build)
 
 ### Web Development
 To run the web application in the browser:
 
 ```bash
 pnpm install
+pnpm install
+# Start server with HTTPS (required for camera access on mobile)
 pnpm dev
 ```
-Open `http://localhost:4200`.
+Open `https://localhost:4200` (Accept the security warning if prompted).
 
 ### Desktop Development (Tauri)
 To run the native desktop application:
@@ -50,7 +53,7 @@ pnpm tauri build
 - **Frontend**: Angular 21 (Standalone Components, Signals).
 - **Storage**: IndexedDB (via `idb`) for persistent local storage on both Web and Desktop.
 - **Crypto**: `otpauth` library for RFC 6238 TOTP generation.
-- **Scanning**: `@zxing/browser` for QR code decoding.
+- **Scanning**: `qr-scanner` for high-performance QR code decoding.
 
 ## Roadmap
 - [x] Encrypted Backup/Restore (JSON)
@@ -60,3 +63,5 @@ pnpm tauri build
 - [x] Generate a new favicon and replace the default angular favicon
 - [x] Click on the OTP Code should copy the code to clipboard
 - [x] Add account -> Upload image via drag and drop
+- [ ] Add full offline first PWA support
+- [ ] Add prettier and eslint with organize imports
