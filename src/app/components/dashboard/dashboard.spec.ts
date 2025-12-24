@@ -17,6 +17,9 @@ class MockTotpService {
   updateAccount(_account: unknown) {
     // noop
   }
+  reorderAccount(_id: string, _index: number) {
+    // noop
+  }
 }
 
 class MockToastService {

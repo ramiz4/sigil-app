@@ -74,6 +74,7 @@ describe('BackupService', () => {
         type: 'totp' as const,
         created: 123,
         folder: 'Work',
+        order: 0,
       },
       {
         id: '2',
@@ -85,6 +86,7 @@ describe('BackupService', () => {
         period: 30,
         type: 'totp' as const,
         created: 124,
+        order: 1,
       },
     ];
     mockStorage.accounts = testAccounts;
@@ -130,6 +132,7 @@ describe('BackupService', () => {
         period: 30,
         type: 'totp',
         created: 123,
+        order: 0,
       },
       {
         id: '2',
@@ -171,6 +174,7 @@ describe('BackupService', () => {
         period: 30,
         type: 'totp' as const,
         created: 123,
+        order: 0,
       },
     ];
 
