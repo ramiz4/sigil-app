@@ -4,11 +4,12 @@ import { CommonModule } from '@angular/common';
 import { SecurityService } from './services/security.service';
 import { LockComponent } from './components/lock/lock';
 import { ToastComponent } from './components/toast/toast';
+import { DialogComponent } from './components/dialog/dialog';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, RouterLink, CommonModule, LockComponent, ToastComponent],
+  imports: [RouterOutlet, RouterLink, CommonModule, LockComponent, ToastComponent, DialogComponent],
   templateUrl: './app.html',
 })
 export class App {

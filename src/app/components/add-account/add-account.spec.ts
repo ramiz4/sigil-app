@@ -2,11 +2,18 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AddAccount } from './add-account';
 import { TotpService } from '../../services/totp.service';
+import { DialogService } from '../../services/dialog.service';
 import { provideRouter } from '@angular/router';
 
 class MockTotpService {
   async addAccount(data: any) { }
   parseUrl(url: string) { return {}; }
+}
+
+class MockDialogService {
+  alert = vi.fn().mockResolvedValue(undefined);
+  confirm = vi.fn().mockResolvedValue(true);
+  prompt = vi.fn().mockResolvedValue('');
 }
 
 describe('AddAccount', () => {
@@ -18,7 +25,8 @@ describe('AddAccount', () => {
       imports: [AddAccount],
       providers: [
         provideRouter([]),
-        { provide: TotpService, useClass: MockTotpService }
+        { provide: TotpService, useClass: MockTotpService },
+        { provide: DialogService, useClass: MockDialogService }
       ]
     })
       .compileComponents();

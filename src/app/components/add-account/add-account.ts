@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { TotpService } from '../../services/totp.service';
 import { BrowserQRCodeReader, IScannerControls } from '@zxing/browser';
+import { DialogService } from '../../services/dialog.service';
 
 type Mode = 'scan' | 'manual' | 'image' | 'paste';
 
@@ -15,6 +16,7 @@ type Mode = 'scan' | 'manual' | 'image' | 'paste';
 export class AddAccount implements OnDestroy {
   totp = inject(TotpService);
   router = inject(Router);
+  dialog = inject(DialogService);
 
   mode = signal<Mode>('scan');
   targetFolder = signal('');
@@ -99,7 +101,7 @@ export class AddAccount implements OnDestroy {
       await this.add(parsed);
     } catch (e) {
       console.error(e);
-      alert('Invalid QR Code');
+      await this.dialog.alert('Invalid QR Code');
     }
   }
 
@@ -115,7 +117,7 @@ export class AddAccount implements OnDestroy {
         period: 30
       });
     } catch (e) {
-      alert('Error adding account');
+      await this.dialog.alert('Error adding account');
     }
   }
 
@@ -131,7 +133,7 @@ export class AddAccount implements OnDestroy {
         console.warn('Failed to parse line');
       }
     }
-    if (added === 0) alert('No valid URLs found');
+    if (added === 0) await this.dialog.alert('No valid URLs found');
     else this.router.navigate(['/']);
   }
 
@@ -157,6 +159,13 @@ export class AddAccount implements OnDestroy {
     const files = event.dataTransfer?.files;
     if (files && files.length > 0) {
       this.processImageFile(files[0]);
+    } else if (event.dataTransfer?.items) {
+      // Fallback for some environments
+      const item = Array.from(event.dataTransfer.items).find(i => i.kind === 'file');
+      const file = item?.getAsFile();
+      if (file) {
+        this.processImageFile(file);
+      }
     }
   }
 
@@ -175,7 +184,7 @@ export class AddAccount implements OnDestroy {
       this.handleScanResult(result.getText());
       URL.revokeObjectURL(imageUrl);
     } catch (e) {
-      alert('Could not decode QR from image');
+      await this.dialog.alert('Could not decode QR from image');
     }
   }
 
