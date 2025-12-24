@@ -13,3 +13,9 @@
 - Never push directly to `main`.
 - Always create a feature branch and a PR.
 - The build and deploy process is automated via GitHub Actions on merge to `main`.
+
+# AI Agent Rules
+- **Branching**: Start every task by creating a new branch (e.g., `feat/...` or `fix/...`).
+- **TDD**: Apply Test-Driven Development. Write failing tests first, then implement the code.
+- **Micro-Commits**: Make small, frequent, atomic commits throughout the task.
+- **Versioning**: Bump the project version correctly (patch, minor, or major) based on the implementation before finishing.
