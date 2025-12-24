@@ -16,6 +16,18 @@ class MockDialogService {
   prompt = vi.fn().mockResolvedValue('');
 }
 
+vi.mock('qr-scanner', () => {
+  return {
+    default: class {
+      static hasCamera = vi.fn().mockResolvedValue(true);
+      static scanImage = vi.fn().mockResolvedValue('otpauth://totp/Example:user?secret=ABC');
+      start = vi.fn().mockResolvedValue(undefined);
+      stop = vi.fn();
+      destroy = vi.fn();
+    }
+  };
+});
+
 describe('AddAccount', () => {
   let component: AddAccount;
   let fixture: ComponentFixture<AddAccount>;
@@ -33,7 +45,15 @@ describe('AddAccount', () => {
 
     fixture = TestBed.createComponent(AddAccount);
     component = fixture.componentInstance;
-    await fixture.whenStable();
+
+    // Mock secure context
+    Object.defineProperty(window, 'isSecureContext', {
+      value: true,
+      writable: true
+    });
+
+    // We don't call fixture.detectChanges() immediately if we want to spy on methods before ngOnInit/ngAfterViewInit
+    // but in this case, ngAfterViewInit runs after change detection.
   });
 
   it('should create', () => {

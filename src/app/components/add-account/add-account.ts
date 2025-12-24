@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild, signal, inject, OnDestroy } from '@angular/core';
+import { Component, ElementRef, ViewChild, signal, inject, OnDestroy, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -13,7 +13,7 @@ type Mode = 'scan' | 'manual' | 'image' | 'paste';
   imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './add-account.html',
 })
-export class AddAccount implements OnDestroy {
+export class AddAccount implements OnDestroy, AfterViewInit {
   totp = inject(TotpService);
   router = inject(Router);
   dialog = inject(DialogService);
@@ -98,6 +98,12 @@ export class AddAccount implements OnDestroy {
 
   ngOnDestroy() {
     this.stopScan();
+  }
+
+  ngAfterViewInit() {
+    if (this.mode() === 'scan') {
+      this.startScan();
+    }
   }
 
   async handleScanResult(text: string) {
