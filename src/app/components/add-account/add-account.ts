@@ -48,8 +48,19 @@ export class AddAccount implements OnDestroy {
   async startScan() {
     this.scanError = '';
 
+    if (!window.isSecureContext) {
+      this.scanError = 'Camera requires a secure connection (HTTPS). Please use HTTPS or localhost to scan.';
+      return;
+    }
+
     if (this.videoElem && this.videoElem.nativeElement) {
       try {
+        const hasCamera = await QrScanner.hasCamera();
+        if (!hasCamera) {
+          this.scanError = 'No camera found on this device.';
+          return;
+        }
+
         if (this.qrScanner) {
           this.qrScanner.destroy();
         }
