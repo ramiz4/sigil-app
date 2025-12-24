@@ -93,7 +93,15 @@ describe('TotpService', () => {
     await service.loadAccounts();
 
     await expect(
-      service.addAccount({ issuer: 'Test', label: 'user', secret: 'ABC' } as any),
+      service.addAccount({
+        issuer: 'Test',
+        label: 'user',
+        secret: 'ABC',
+        algorithm: 'SHA1',
+        digits: 6,
+        period: 30,
+        type: 'totp',
+      }),
     ).rejects.toThrow('Duplicate account');
   });
 });
