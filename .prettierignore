@@ -3,3 +3,4 @@ dist
 .angular
 src-tauri/target
 coverage
+pnpm-lock.yaml
