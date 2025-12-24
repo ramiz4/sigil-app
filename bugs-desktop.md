@@ -41,7 +41,7 @@ The following bugs are present only in the desktop version of the app:
     5. See the QR code scanned
     6. See the account added
 
-## 5. Remove PIN doesn't work
+## 5. [Resolved] Remove PIN doesn't work
 
 ### Steps to Reproduce
 
