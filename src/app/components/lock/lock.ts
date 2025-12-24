@@ -5,6 +5,7 @@ import {
   HostListener,
   inject,
   Input,
+  OnInit,
   Output,
   signal,
 } from '@angular/core';
@@ -16,8 +17,8 @@ import { SecurityService } from '../../services/security.service';
   imports: [CommonModule],
   templateUrl: './lock.html',
 })
-export class LockComponent {
-  private security = inject(SecurityService);
+export class LockComponent implements OnInit {
+  public security = inject(SecurityService);
 
   @Input() mode: 'unlock' | 'set' = 'unlock';
   @Output() unlocked = new EventEmitter<void>();
@@ -28,6 +29,19 @@ export class LockComponent {
   // For 'set' mode
   firstPin = signal('');
   step = signal(1); // 1 = first entry, 2 = confirm
+
+  ngOnInit() {
+    if (this.mode === 'unlock' && this.security.isBiometricEnabled()) {
+      this.handleBiometric();
+    }
+  }
+
+  async handleBiometric() {
+    const success = await this.security.authenticateBiometric();
+    if (success) {
+      this.unlocked.emit();
+    }
+  }
 
   @HostListener('window:keydown', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent) {
@@ -86,6 +100,9 @@ export class LockComponent {
   }
 
   get keys() {
+    if (this.mode === 'unlock' && this.security.isBiometricEnabled()) {
+      return ['1', '2', '3', '4', '5', '6', '7', '8', '9', 'biometric', '0', 'delete'];
+    }
     return ['1', '2', '3', '4', '5', '6', '7', '8', '9', '', '0', 'delete'];
   }
 }

@@ -10,6 +10,13 @@ export class SecurityService {
   private _isUnlocked = signal(false);
   public isUnlocked = this._isUnlocked.asReadonly();
 
+  private _isBiometricEnabled = signal(localStorage.getItem('sigil_biometric_enabled') === 'true');
+  public isBiometricEnabled = this._isBiometricEnabled.asReadonly();
+
+  isBiometricSupported(): boolean {
+    return !!window.navigator?.credentials && !!window.PublicKeyCredential;
+  }
+
   constructor() {
     // If no PIN is set, consider it unlocked
     if (!this.hasPIN()) {
@@ -51,7 +58,85 @@ export class SecurityService {
   removePIN(): void {
     localStorage.removeItem(this.PIN_KEY);
     localStorage.removeItem(this.SALT_KEY);
+    localStorage.removeItem('sigil_biometric_enabled');
+    localStorage.removeItem('sigil_biometric_cred_id');
+    this._isBiometricEnabled.set(false);
     this._isUnlocked.set(true);
+  }
+
+  async enableBiometric(): Promise<boolean> {
+    if (!this.hasPIN()) return false;
+
+    try {
+      const challenge = window.crypto.getRandomValues(new Uint8Array(32));
+      const userId = window.crypto.getRandomValues(new Uint8Array(16));
+
+      const credential = (await navigator.credentials.create({
+        publicKey: {
+          challenge,
+          rp: { name: 'Sigil' },
+          user: {
+            id: userId,
+            name: 'user@sigil',
+            displayName: 'Sigil User',
+          },
+          pubKeyCredParams: [{ alg: -7, type: 'public-key' }],
+          authenticatorSelection: {
+            authenticatorAttachment: 'platform',
+            userVerification: 'required',
+          },
+          timeout: 60000,
+        },
+      })) as PublicKeyCredential;
+
+      if (credential) {
+        localStorage.setItem('sigil_biometric_enabled', 'true');
+        localStorage.setItem('sigil_biometric_cred_id', this.bufferToHex(credential.rawId));
+        this._isBiometricEnabled.set(true);
+        return true;
+      }
+    } catch (error) {
+      console.error('Biometric registration failed', error);
+    }
+    return false;
+  }
+
+  disableBiometric(): void {
+    localStorage.removeItem('sigil_biometric_enabled');
+    localStorage.removeItem('sigil_biometric_cred_id');
+    this._isBiometricEnabled.set(false);
+  }
+
+  async authenticateBiometric(): Promise<boolean> {
+    const credIdHex = localStorage.getItem('sigil_biometric_cred_id');
+    if (!credIdHex) return false;
+
+    try {
+      const challenge = window.crypto.getRandomValues(new Uint8Array(32));
+      const credId = this.hexToBuffer(credIdHex);
+
+      const assertion = (await navigator.credentials.get({
+        publicKey: {
+          challenge,
+          allowCredentials: [
+            {
+              id: credId as BufferSource,
+              type: 'public-key',
+            },
+          ],
+          userVerification: 'required',
+          timeout: 60000,
+        },
+      })) as PublicKeyCredential;
+
+      if (assertion) {
+        this._isUnlocked.set(true);
+        return true;
+      }
+    } catch (error) {
+      console.error('Biometric authentication failed', error);
+    }
+    return false;
   }
 
   lock(): void {

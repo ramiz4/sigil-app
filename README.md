@@ -76,3 +76,4 @@ pnpm tauri build
 - [x] Add account -> Upload image via drag and drop
 - [ ] Add full offline first PWA support
 - [x] Add prettier and eslint with organize imports
+- [x] Add capability to unlock with biometric
