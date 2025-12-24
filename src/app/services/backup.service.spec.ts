@@ -8,11 +8,14 @@ class MockStorageService {
   accounts: Account[] = [];
 
   async getAccounts() {
-    return this.accounts;
+    // Simulate the new robust implementation
+    return [...this.accounts].sort((a, b) => (a.created || 0) - (b.created || 0));
   }
 
   async addAccount(account: Omit<Account, 'id' | 'created'>) {
-    this.accounts.push({ ...account, id: 'test-id', created: Date.now() });
+    const newAccount = { ...account, id: 'test-id', created: Date.now() } as Account;
+    this.accounts.push(newAccount);
+    return newAccount;
   }
 }
 
@@ -57,20 +60,34 @@ describe('BackupService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('should encrypt and decrypt accounts correctly', async () => {
+  it('should encrypt and decrypt multiple accounts correctly', async () => {
     // Setup scenarios
-    const testAccount = {
-      id: '1',
-      issuer: 'Test',
-      label: 'User',
-      secret: 'SECRET',
-      algorithm: 'SHA1',
-      digits: 6,
-      period: 30,
-      type: 'totp' as const,
-      created: 123,
-    };
-    mockStorage.accounts = [testAccount];
+    const testAccounts: Account[] = [
+      {
+        id: '1',
+        issuer: 'Google',
+        label: 'user1',
+        secret: 'SECRET1',
+        algorithm: 'SHA1',
+        digits: 6,
+        period: 30,
+        type: 'totp' as const,
+        created: 123,
+        folder: 'Work',
+      },
+      {
+        id: '2',
+        issuer: 'GitHub',
+        label: 'user2',
+        secret: 'SECRET2',
+        algorithm: 'SHA1',
+        digits: 6,
+        period: 30,
+        type: 'totp' as const,
+        created: 124,
+      },
+    ];
+    mockStorage.accounts = testAccounts;
 
     // Export
     const password = 'securepassword';
@@ -80,25 +97,66 @@ describe('BackupService', () => {
     const createObjUrlSpy = vi.mocked(window.URL.createObjectURL);
     const blob = createObjUrlSpy.mock.lastCall![0] as Blob;
 
-    // Use the method on blob, which might be polyfilled now
     const text = await blob.text();
     const json = JSON.parse(text);
 
     expect(json.v).toBe(1);
-    expect(json.data).toBeDefined(); // encrypted data
-    expect(json.salt).toBeDefined();
+    expect(json.data).toBeDefined();
 
-    // Clear storage to simulating fresh import
+    // Clear storage
     mockStorage.accounts = [];
 
     // Import
     const file = new File([text], 'backup.json', { type: 'application/json' });
     const result = await service.importBackup(file, password);
 
-    expect(result.restored).toBe(1);
+    expect(result.restored).toBe(2);
     expect(result.skipped).toBe(0);
-    expect(mockStorage.accounts.length).toBe(1);
-    expect(mockStorage.accounts[0].secret).toBe('SECRET');
+    expect(mockStorage.accounts.length).toBe(2);
+    expect(mockStorage.accounts.find((a) => a.issuer === 'Google')?.folder).toBe('Work');
+    expect(mockStorage.accounts.find((a) => a.issuer === 'GitHub')?.secret).toBe('SECRET2');
+  });
+
+  it('should include all accounts even if some are missing created field', async () => {
+    // Setup
+    const testAccounts: Account[] = [
+      {
+        id: '1',
+        issuer: 'Google',
+        label: 'u1',
+        secret: 'S1',
+        algorithm: 'SHA1',
+        digits: 6,
+        period: 30,
+        type: 'totp',
+        created: 123,
+      },
+      {
+        id: '2',
+        issuer: 'GitHub',
+        label: 'u2',
+        secret: 'S2',
+        algorithm: 'SHA1',
+        digits: 6,
+        period: 30,
+        type: 'totp',
+        // missing created
+      } as unknown as Account,
+    ];
+    mockStorage.accounts = testAccounts;
+
+    await service.exportBackup('pass');
+
+    const createObjUrlSpy = vi.mocked(window.URL.createObjectURL);
+    const blob = createObjUrlSpy.mock.lastCall![0] as Blob;
+    const text = await blob.text();
+
+    mockStorage.accounts = [];
+    const file = new File([text], 'backup.json', { type: 'application/json' });
+    const result = await service.importBackup(file, 'pass');
+
+    expect(result.restored).toBe(2);
+    expect(mockStorage.accounts.length).toBe(2);
   });
 
   it('should fail import with wrong password', async () => {

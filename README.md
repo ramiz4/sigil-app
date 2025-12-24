@@ -74,6 +74,6 @@ pnpm tauri build
 - [x] Generate a new favicon and replace the default angular favicon
 - [x] Click on the OTP Code should copy the code to clipboard
 - [x] Add account -> Upload image via drag and drop
-- [ ] Add full offline first PWA support
 - [x] Add prettier and eslint with organize imports
 - [x] Add capability to unlock with biometric
+- [ ] Add full offline first PWA support
