@@ -1,10 +1,10 @@
-import { Component, signal, inject, HostListener } from '@angular/core';
-import { RouterOutlet, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { SecurityService } from './services/security.service';
+import { Component, HostListener, inject, signal } from '@angular/core';
+import { RouterLink, RouterOutlet } from '@angular/router';
+import { DialogComponent } from './components/dialog/dialog';
 import { LockComponent } from './components/lock/lock';
 import { ToastComponent } from './components/toast/toast';
-import { DialogComponent } from './components/dialog/dialog';
+import { SecurityService } from './services/security.service';
 
 @Component({
   selector: 'app-root',

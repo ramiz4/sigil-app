@@ -1,13 +1,15 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { AddAccount } from './add-account';
-import { TotpService } from '../../services/totp.service';
-import { DialogService } from '../../services/dialog.service';
 import { provideRouter } from '@angular/router';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { DialogService } from '../../services/dialog.service';
+import { TotpService } from '../../services/totp.service';
+import { AddAccount } from './add-account';
 
 class MockTotpService {
-  async addAccount(data: any) { }
-  parseUrl(url: string) { return {}; }
+  async addAccount(data: any) {}
+  parseUrl(url: string) {
+    return {};
+  }
 }
 
 class MockDialogService {
@@ -24,7 +26,7 @@ vi.mock('qr-scanner', () => {
       start = vi.fn().mockResolvedValue(undefined);
       stop = vi.fn();
       destroy = vi.fn();
-    }
+    },
   };
 });
 
@@ -38,10 +40,9 @@ describe('AddAccount', () => {
       providers: [
         provideRouter([]),
         { provide: TotpService, useClass: MockTotpService },
-        { provide: DialogService, useClass: MockDialogService }
-      ]
-    })
-      .compileComponents();
+        { provide: DialogService, useClass: MockDialogService },
+      ],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(AddAccount);
     component = fixture.componentInstance;
@@ -49,7 +50,7 @@ describe('AddAccount', () => {
     // Mock secure context
     Object.defineProperty(window, 'isSecureContext', {
       value: true,
-      writable: true
+      writable: true,
     });
 
     // We don't call fixture.detectChanges() immediately if we want to spy on methods before ngOnInit/ngAfterViewInit
@@ -68,20 +69,22 @@ describe('AddAccount', () => {
     component.manualEntry = {
       issuer: 'Test',
       label: 'test@test.com',
-      secret: 'ABC'
+      secret: 'ABC',
     };
 
     await component.addManual();
 
-    expect(addSpy).toHaveBeenCalledWith(expect.objectContaining({
-      folder: 'Work'
-    }));
+    expect(addSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        folder: 'Work',
+      }),
+    );
   });
 
   it('should handle drag over events', () => {
     const mockEvent = {
       preventDefault: vi.fn(),
-      stopPropagation: vi.fn()
+      stopPropagation: vi.fn(),
     } as unknown as DragEvent;
 
     component.onDragOver(mockEvent);
@@ -94,7 +97,7 @@ describe('AddAccount', () => {
   it('should handle drag leave events', () => {
     const mockEvent = {
       preventDefault: vi.fn(),
-      stopPropagation: vi.fn()
+      stopPropagation: vi.fn(),
     } as unknown as DragEvent;
 
     component.isDragging.set(true);
@@ -106,15 +109,15 @@ describe('AddAccount', () => {
   });
 
   it('should process file on drop', () => {
-    const processSpy = vi.spyOn(component, 'processImageFile').mockImplementation(async () => { });
+    const processSpy = vi.spyOn(component, 'processImageFile').mockImplementation(async () => {});
     const mockFile = new File([''], 'qr.png', { type: 'image/png' });
 
     const mockEvent = {
       preventDefault: vi.fn(),
       stopPropagation: vi.fn(),
       dataTransfer: {
-        files: [mockFile]
-      }
+        files: [mockFile],
+      },
     } as unknown as DragEvent;
 
     component.onDrop(mockEvent);

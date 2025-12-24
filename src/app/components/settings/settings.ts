@@ -1,11 +1,11 @@
-import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import packageJson from '@package-json';
 import { BackupService } from '../../services/backup.service';
 import { SecurityService } from '../../services/security.service';
 import { LockComponent } from '../lock/lock';
 import { ThemeToggle } from '../theme-toggle';
-import packageJson from '@package-json';
 
 @Component({
   selector: 'app-settings',
@@ -20,10 +20,10 @@ export class Settings {
   showPINSetup = signal(false);
   version = packageJson.version;
 
-
-
   async exportBackup() {
-    const password = prompt('Enter a password to encrypt your backup (Important: Do not lose this!):');
+    const password = prompt(
+      'Enter a password to encrypt your backup (Important: Do not lose this!):',
+    );
     if (!password) return;
 
     try {
@@ -51,7 +51,9 @@ export class Settings {
 
     try {
       const result = await this.backupService.importBackup(file, password);
-      alert(`Restore complete.\nRestored: ${result.restored}\nSkipped (duplicates): ${result.skipped}`);
+      alert(
+        `Restore complete.\nRestored: ${result.restored}\nSkipped (duplicates): ${result.skipped}`,
+      );
     } catch (e: any) {
       console.error(e);
       alert('Restore failed: ' + e.message);

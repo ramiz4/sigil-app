@@ -1,5 +1,5 @@
-import { Component, signal, inject, PLATFORM_ID, OnInit } from '@angular/core';
-import { isPlatformBrowser, CommonModule } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { Component, inject, OnInit, PLATFORM_ID, signal } from '@angular/core';
 
 @Component({
   selector: 'app-theme-toggle',
@@ -18,7 +18,7 @@ export class ThemeToggle implements OnInit {
   }
 
   toggle() {
-    this.isDark.update(d => !d);
+    this.isDark.update((d) => !d);
     this.updateTheme();
   }
 

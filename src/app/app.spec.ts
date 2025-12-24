@@ -1,13 +1,13 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { App } from './app';
 
 describe('App', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [App],
-      providers: [provideRouter([])]
+      providers: [provideRouter([])],
     }).compileComponents();
   });
 
@@ -73,7 +73,7 @@ describe('App', () => {
       code: 'KeyL',
       ctrlKey: true,
       shiftKey: true,
-      bubbles: true
+      bubbles: true,
     });
     window.dispatchEvent(event);
 

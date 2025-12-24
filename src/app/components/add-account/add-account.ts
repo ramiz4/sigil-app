@@ -1,10 +1,18 @@
-import { Component, ElementRef, ViewChild, signal, inject, OnDestroy, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  inject,
+  OnDestroy,
+  signal,
+  ViewChild,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { TotpService } from '../../services/totp.service';
 import QrScanner from 'qr-scanner';
 import { DialogService } from '../../services/dialog.service';
+import { TotpService } from '../../services/totp.service';
 
 type Mode = 'scan' | 'manual' | 'image' | 'paste';
 
@@ -25,7 +33,7 @@ export class AddAccount implements OnDestroy, AfterViewInit {
   manualEntry = {
     issuer: '',
     label: '',
-    secret: ''
+    secret: '',
   };
 
   // Paste / URL
@@ -49,7 +57,8 @@ export class AddAccount implements OnDestroy, AfterViewInit {
     this.scanError = '';
 
     if (!window.isSecureContext) {
-      this.scanError = 'Camera requires a secure connection (HTTPS). Please use HTTPS or localhost to scan.';
+      this.scanError =
+        'Camera requires a secure connection (HTTPS). Please use HTTPS or localhost to scan.';
       return;
     }
 
@@ -75,7 +84,7 @@ export class AddAccount implements OnDestroy, AfterViewInit {
             preferredCamera: 'environment',
             highlightScanRegion: true,
             highlightCodeOutline: true,
-          }
+          },
         );
 
         await this.qrScanner.start();
@@ -125,7 +134,7 @@ export class AddAccount implements OnDestroy, AfterViewInit {
         secret: this.manualEntry.secret,
         algorithm: 'SHA1',
         digits: 6,
-        period: 30
+        period: 30,
       });
     } catch (e) {
       await this.dialog.alert('Error adding account');
@@ -133,7 +142,10 @@ export class AddAccount implements OnDestroy, AfterViewInit {
   }
 
   async processPaste() {
-    const lines = this.pasteContent.split('\n').map(l => l.trim()).filter(Boolean);
+    const lines = this.pasteContent
+      .split('\n')
+      .map((l) => l.trim())
+      .filter(Boolean);
     let added = 0;
     for (const line of lines) {
       try {
@@ -175,7 +187,7 @@ export class AddAccount implements OnDestroy, AfterViewInit {
       this.processImageFile(files[0]);
     } else if (event.dataTransfer?.items) {
       // Fallback for some environments
-      const item = Array.from(event.dataTransfer.items).find(i => i.kind === 'file');
+      const item = Array.from(event.dataTransfer.items).find((i) => i.kind === 'file');
       const file = item?.getAsFile();
       if (file) {
         this.processImageFile(file);
@@ -203,7 +215,7 @@ export class AddAccount implements OnDestroy, AfterViewInit {
     if (!data.secret) throw new Error('No secret');
     await this.totp.addAccount({
       ...data,
-      folder: data.folder || this.targetFolder()
+      folder: data.folder || this.targetFolder(),
     });
     this.router.navigate(['/']);
   }

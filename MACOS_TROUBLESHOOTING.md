@@ -18,7 +18,7 @@ Since you are the developer and know the app is safe, you can bypass this check 
 To prevent users from seeing this message, the Tauri build process must be updated with **Apple Code Signing and Notarization**. This requires:
 
 1.  **Apple Developer Program Membership**: An active subscription ($99/year).
-2.  **Certificates**: Generating a *Developer ID Application* certificate and an *App-specific Password* in your Apple Developer account.
+2.  **Certificates**: Generating a _Developer ID Application_ certificate and an _App-specific Password_ in your Apple Developer account.
 3.  **GitHub Secrets**: Adding the following secrets to your repository:
     - `APPLE_CERTIFICATE`: The base64 encoded p12 certificate.
     - `APPLE_CERTIFICATE_PASSWORD`: The password for the p12 certificate.

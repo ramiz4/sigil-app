@@ -1,10 +1,10 @@
-import { Component, inject, computed } from '@angular/core';
 import { CommonModule } from '@angular/common'; // Fallback
+import { Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { TotpService, TotpDisplay } from '../../services/totp.service';
+import { DialogService } from '../../services/dialog.service';
 import { Account } from '../../services/storage.service';
 import { ToastService } from '../../services/toast.service';
-import { DialogService } from '../../services/dialog.service';
+import { TotpDisplay, TotpService } from '../../services/totp.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -19,7 +19,7 @@ export class Dashboard {
   codes = this.totp.displayCodes;
 
   groupedCodes = computed(() => {
-    const groups: { [key: string]: TotpDisplay[] } = {};
+    const groups: Record<string, TotpDisplay[]> = {};
     const ungrouped: TotpDisplay[] = [];
 
     for (const item of this.codes()) {
@@ -32,10 +32,12 @@ export class Dashboard {
       }
     }
 
-    const result = Object.keys(groups).sort().map(name => ({
-      name,
-      items: groups[name]
-    }));
+    const result = Object.keys(groups)
+      .sort()
+      .map((name) => ({
+        name,
+        items: groups[name],
+      }));
 
     if (ungrouped.length > 0) {
       result.push({ name: '', items: ungrouped });
@@ -55,11 +57,15 @@ export class Dashboard {
   }
 
   async editFolder(account: Account) {
-    const newFolder = await this.dialog.prompt('Enter folder name for this account:', account.folder || '', 'Edit Folder');
+    const newFolder = await this.dialog.prompt(
+      'Enter folder name for this account:',
+      account.folder || '',
+      'Edit Folder',
+    );
     if (newFolder !== null) {
       await this.totp.updateAccount({
         ...account,
-        folder: newFolder.trim() || undefined
+        folder: newFolder.trim() || undefined,
       });
     }
   }

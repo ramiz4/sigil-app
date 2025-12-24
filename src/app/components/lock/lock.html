@@ -1,54 +1,90 @@
-<div class="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-bg p-6 animate-in fade-in duration-500">
-    <div class="w-full max-w-xs text-center">
-        <!-- Icon or Logo -->
-        <div class="mb-8 flex justify-center">
-            <div class="flex h-20 w-20 items-center justify-center rounded-2xl bg-primary shadow-lg shadow-primary/20">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="white"
-                    class="h-10 w-10">
-                    <path stroke-linecap="round" stroke-linejoin="round"
-                        d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
-                </svg>
-            </div>
-        </div>
-
-        <h1 class="mb-2 text-2xl font-bold text-text-main">
-            {{ mode === 'unlock' ? 'Unlock Sigil' : (step() === 1 ? 'Set PIN' : 'Confirm PIN') }}
-        </h1>
-        <p class="mb-10 text-text-secondary">
-            {{
-            mode === 'unlock'
-            ? 'Enter your 6-digit PIN to continue'
-            : (step() === 1 ? 'Choose a 6-digit PIN for security' : 'Enter the PIN again to confirm')
-            }}
-        </p>
-
-        <!-- PIN Display -->
-        <div class="mb-12 flex justify-center gap-3" [class.animate-shake]="error()">
-            <div *ngFor="let i of [0,1,2,3,4,5]" class="h-4 w-4 rounded-full border-2 transition-all duration-200"
-                [class.bg-text-main]="pin().length > i" [class.border-text-main]="pin().length > i"
-                [class.border-border]="pin().length <= i" [class.border-danger]="error()">
-            </div>
-        </div>
-
-        <!-- Error Message -->
-        <div *ngIf="error()" class="mb-4 text-sm font-medium text-danger animate-in fade-in slide-in-from-top-1">
-            {{ mode === 'unlock' ? 'Incorrect PIN, please try again' : 'PINs do not match, try again' }}
-        </div>
-
-        <!-- Keypad -->
-        <div class="grid grid-cols-3 gap-4">
-            <button *ngFor="let key of keys"
-                (click)="key === 'delete' ? handleDelete() : (key !== '' && handleKey(key))"
-                class="flex h-16 w-16 items-center justify-center rounded-full text-xl font-medium transition-all active:scale-95 active:bg-surface"
-                [class.invisible]="key === ''" [class.text-text-main]="key !== 'delete'"
-                [class.text-text-secondary]="key === 'delete'" [class.hover:bg-surface]="key !== ''">
-                <ng-container *ngIf="key !== 'delete'">{{ key }}</ng-container>
-                <svg *ngIf="key === 'delete'" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                    stroke-width="2" stroke="currentColor" class="h-6 w-6">
-                    <path stroke-linecap="round" stroke-linejoin="round"
-                        d="M12 9.75 14.25 12m0 0 2.25 2.25M14.25 12l2.25-2.25M14.25 12L12 14.25m-2.58 4.92-6.374-6.375a1.125 1.125 0 0 1 0-1.59L9.42 4.83c.21-.211.497-.33.795-.33H19.5a2.25 2.25 0 0 1 2.25 2.25v10.5a2.25 2.25 0 0 1-2.25 2.25h-9.284c-.298 0-.585-.119-.795-.33Z" />
-                </svg>
-            </button>
-        </div>
+<div
+  class="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-bg p-6 animate-in fade-in duration-500"
+>
+  <div class="w-full max-w-xs text-center">
+    <!-- Icon or Logo -->
+    <div class="mb-8 flex justify-center">
+      <div
+        class="flex h-20 w-20 items-center justify-center rounded-2xl bg-primary shadow-lg shadow-primary/20"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="2"
+          stroke="white"
+          class="h-10 w-10"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z"
+          />
+        </svg>
+      </div>
     </div>
+
+    <h1 class="mb-2 text-2xl font-bold text-text-main">
+      {{ mode === 'unlock' ? 'Unlock Sigil' : step() === 1 ? 'Set PIN' : 'Confirm PIN' }}
+    </h1>
+    <p class="mb-10 text-text-secondary">
+      {{
+        mode === 'unlock'
+          ? 'Enter your 6-digit PIN to continue'
+          : step() === 1
+            ? 'Choose a 6-digit PIN for security'
+            : 'Enter the PIN again to confirm'
+      }}
+    </p>
+
+    <!-- PIN Display -->
+    <div class="mb-12 flex justify-center gap-3" [class.animate-shake]="error()">
+      <div
+        *ngFor="let i of [0, 1, 2, 3, 4, 5]"
+        class="h-4 w-4 rounded-full border-2 transition-all duration-200"
+        [class.bg-text-main]="pin().length > i"
+        [class.border-text-main]="pin().length > i"
+        [class.border-border]="pin().length <= i"
+        [class.border-danger]="error()"
+      ></div>
+    </div>
+
+    <!-- Error Message -->
+    <div
+      *ngIf="error()"
+      class="mb-4 text-sm font-medium text-danger animate-in fade-in slide-in-from-top-1"
+    >
+      {{ mode === 'unlock' ? 'Incorrect PIN, please try again' : 'PINs do not match, try again' }}
+    </div>
+
+    <!-- Keypad -->
+    <div class="grid grid-cols-3 gap-4">
+      <button
+        *ngFor="let key of keys"
+        (click)="key === 'delete' ? handleDelete() : key !== '' && handleKey(key)"
+        class="flex h-16 w-16 items-center justify-center rounded-full text-xl font-medium transition-all active:scale-95 active:bg-surface"
+        [class.invisible]="key === ''"
+        [class.text-text-main]="key !== 'delete'"
+        [class.text-text-secondary]="key === 'delete'"
+        [class.hover:bg-surface]="key !== ''"
+      >
+        <ng-container *ngIf="key !== 'delete'">{{ key }}</ng-container>
+        <svg
+          *ngIf="key === 'delete'"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="2"
+          stroke="currentColor"
+          class="h-6 w-6"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M12 9.75 14.25 12m0 0 2.25 2.25M14.25 12l2.25-2.25M14.25 12L12 14.25m-2.58 4.92-6.374-6.375a1.125 1.125 0 0 1 0-1.59L9.42 4.83c.21-.211.497-.33.795-.33H19.5a2.25 2.25 0 0 1 2.25 2.25v10.5a2.25 2.25 0 0 1-2.25 2.25h-9.284c-.298 0-.585-.119-.795-.33Z"
+          />
+        </svg>
+      </button>
+    </div>
+  </div>
 </div>

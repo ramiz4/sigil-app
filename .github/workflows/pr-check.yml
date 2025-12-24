@@ -2,27 +2,27 @@ name: PR Check
 
 on:
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
-    
-    - name: Install Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: 22
-        
-    - uses: pnpm/action-setup@v4
+      - uses: actions/checkout@v4
 
-    - name: Install dependencies
-      run: pnpm install
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
 
-    - name: Build Web
-      run: pnpm build
+      - uses: pnpm/action-setup@v4
 
-    - name: Test
-      run: pnpm test --watch=false
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build Web
+        run: pnpm build
+
+      - name: Test
+        run: pnpm test --watch=false

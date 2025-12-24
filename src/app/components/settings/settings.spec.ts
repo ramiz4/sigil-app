@@ -1,11 +1,11 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Settings } from './settings';
+import { By } from '@angular/platform-browser';
+import { provideRouter } from '@angular/router';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { BackupService } from '../../services/backup.service';
 import { SecurityService } from '../../services/security.service';
-import { provideRouter } from '@angular/router';
-import { signal } from '@angular/core';
-import { By } from '@angular/platform-browser';
+import { Settings } from './settings';
 
 class MockBackupService {
   exportBackup = vi.fn();
@@ -33,12 +33,12 @@ describe('Settings', () => {
         matches: false,
         media: query,
         onchange: null,
-        addListener: () => { },
-        removeListener: () => { },
-        addEventListener: () => { },
-        removeEventListener: () => { },
+        addListener: () => {},
+        removeListener: () => {},
+        addEventListener: () => {},
+        removeEventListener: () => {},
         dispatchEvent: () => false,
-      })
+      }),
     });
 
     await TestBed.configureTestingModule({
@@ -46,8 +46,8 @@ describe('Settings', () => {
       providers: [
         provideRouter([]),
         { provide: BackupService, useClass: MockBackupService },
-        { provide: SecurityService, useClass: MockSecurityService }
-      ]
+        { provide: SecurityService, useClass: MockSecurityService },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(Settings);
@@ -105,7 +105,7 @@ describe('Settings', () => {
   describe('Backup Export', () => {
     it('should export backup when password is provided', async () => {
       vi.spyOn(window, 'prompt').mockReturnValue('s3cr3t');
-      vi.spyOn(window, 'alert').mockImplementation(() => { });
+      vi.spyOn(window, 'alert').mockImplementation(() => {});
       backupService.exportBackup.mockResolvedValue(undefined);
 
       await component.exportBackup();
@@ -123,8 +123,8 @@ describe('Settings', () => {
 
     it('should handle export error', async () => {
       vi.spyOn(window, 'prompt').mockReturnValue('s3cr3t');
-      vi.spyOn(window, 'alert').mockImplementation(() => { });
-      vi.spyOn(console, 'error').mockImplementation(() => { });
+      vi.spyOn(window, 'alert').mockImplementation(() => {});
+      vi.spyOn(console, 'error').mockImplementation(() => {});
       backupService.exportBackup.mockRejectedValue(new Error('Export failed'));
 
       await component.exportBackup();
@@ -150,7 +150,7 @@ describe('Settings', () => {
       const event = { target: { files: [mockFile], value: 'fake/path' } };
 
       vi.spyOn(window, 'prompt').mockReturnValue('s3cr3t');
-      vi.spyOn(window, 'alert').mockImplementation(() => { });
+      vi.spyOn(window, 'alert').mockImplementation(() => {});
       backupService.importBackup.mockResolvedValue({ restored: 5, skipped: 2 });
 
       await component.onFileSelected(event);
@@ -183,8 +183,8 @@ describe('Settings', () => {
       const mockFile = new File([''], 'backup.json');
       const event = { target: { files: [mockFile], value: 'set' } };
       vi.spyOn(window, 'prompt').mockReturnValue('pass');
-      vi.spyOn(window, 'alert').mockImplementation(() => { });
-      vi.spyOn(console, 'error').mockImplementation(() => { });
+      vi.spyOn(window, 'alert').mockImplementation(() => {});
+      vi.spyOn(console, 'error').mockImplementation(() => {});
       backupService.importBackup.mockRejectedValue(new Error('Bad JSON'));
 
       await component.onFileSelected(event);

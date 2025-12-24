@@ -17,9 +17,7 @@
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "paths": {
-      "@package-json": [
-        "./package.json"
-      ]
+      "@package-json": ["./package.json"]
     }
   },
   "angularCompilerOptions": {

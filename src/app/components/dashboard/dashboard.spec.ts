@@ -1,22 +1,22 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Dashboard } from './dashboard';
-import { TotpService } from '../../services/totp.service';
-import { ToastService } from '../../services/toast.service';
-import { DialogService } from '../../services/dialog.service';
 import { signal } from '@angular/core';
-import { provideRouter } from '@angular/router';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
+import { provideRouter } from '@angular/router';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { DialogService } from '../../services/dialog.service';
+import { ToastService } from '../../services/toast.service';
+import { TotpService } from '../../services/totp.service';
+import { Dashboard } from './dashboard';
 
 class MockTotpService {
   displayCodes = signal([]);
-  deleteAccount(id: string) { }
-  updateAccount(account: any) { }
+  deleteAccount(id: string) {}
+  updateAccount(account: any) {}
 }
 
 class MockToastService {
-  success(message: string) { }
-  error(message: string) { }
+  success(message: string) {}
+  error(message: string) {}
 }
 
 class MockDialogService {
@@ -37,10 +37,9 @@ describe('Dashboard', () => {
         provideRouter([]),
         { provide: TotpService, useClass: MockTotpService },
         { provide: ToastService, useClass: MockToastService },
-        { provide: DialogService, useClass: MockDialogService }
-      ]
-    })
-      .compileComponents();
+        { provide: DialogService, useClass: MockDialogService },
+      ],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(Dashboard);
     component = fixture.componentInstance;
@@ -63,7 +62,7 @@ describe('Dashboard', () => {
       { account: { id: '1', issuer: 'A', folder: 'Work' }, code: '123' },
       { account: { id: '2', issuer: 'B', folder: 'Home' }, code: '456' },
       { account: { id: '3', issuer: 'C', folder: 'Work' }, code: '789' },
-      { account: { id: '4', issuer: 'D' }, code: '000' }
+      { account: { id: '4', issuer: 'D' }, code: '000' },
     ] as any);
 
     fixture.detectChanges();
@@ -85,7 +84,7 @@ describe('Dashboard', () => {
     const mockService = TestBed.inject(TotpService) as unknown as MockTotpService;
     mockService.displayCodes.set([
       { account: { id: '1', issuer: 'A', folder: 'Beta' }, code: '123' },
-      { account: { id: '2', issuer: 'B', folder: 'Alpha' }, code: '456' }
+      { account: { id: '2', issuer: 'B', folder: 'Alpha' }, code: '456' },
     ] as any);
 
     fixture.detectChanges();
@@ -103,7 +102,11 @@ describe('Dashboard', () => {
 
     const mockService = TestBed.inject(TotpService) as unknown as MockTotpService;
     mockService.displayCodes.set([
-      { account: { id: '1', issuer: 'Test', label: 'test@example.com' }, code: '999999', progress: 0.5 }
+      {
+        account: { id: '1', issuer: 'Test', label: 'test@example.com' },
+        code: '999999',
+        progress: 0.5,
+      },
     ] as any);
     fixture.detectChanges();
 
@@ -149,10 +152,12 @@ describe('Dashboard', () => {
 
     await component.editFolder(account as any);
 
-    expect(updateSpy).toHaveBeenCalledWith(expect.objectContaining({
-      id: '1',
-      folder: 'New Folder'
-    }));
+    expect(updateSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        id: '1',
+        folder: 'New Folder',
+      }),
+    );
   });
 
   it('should not call updateAccount when prompt is cancelled', async () => {

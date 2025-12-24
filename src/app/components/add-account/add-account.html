@@ -1,128 +1,221 @@
 <div class="max-w-[600px] mx-auto p-4 pt-4">
-    <div class="flex items-center gap-4 mb-4">
-        <a routerLink="/"
-            class="flex items-center gap-2 text-text-secondary no-underline font-medium hover:text-text-main">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="19" y1="12" x2="5" y2="12"></line>
-                <polyline points="12 19 5 12 12 5"></polyline>
-            </svg>
-            Back
-        </a>
-        <h2 class="m-0">Add Account</h2>
-    </div>
+  <div class="flex items-center gap-4 mb-4">
+    <a
+      routerLink="/"
+      class="flex items-center gap-2 text-text-secondary no-underline font-medium hover:text-text-main"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <line x1="19" y1="12" x2="5" y2="12"></line>
+        <polyline points="12 19 5 12 12 5"></polyline>
+      </svg>
+      Back
+    </a>
+    <h2 class="m-0">Add Account</h2>
+  </div>
 
-    <div class="mb-6 bg-surface p-4 rounded-lg border border-border">
-        <label class="mb-2 font-medium text-[0.9rem] flex items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                class="text-text-secondary">
-                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
-            </svg>
-            Target Folder (Applied to all imports)
+  <div class="mb-6 bg-surface p-4 rounded-lg border border-border">
+    <label class="mb-2 font-medium text-[0.9rem] flex items-center gap-2">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        class="text-text-secondary"
+      >
+        <path
+          d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"
+        ></path>
+      </svg>
+      Target Folder (Applied to all imports)
+    </label>
+    <input
+      [ngModel]="targetFolder()"
+      (ngModelChange)="targetFolder.set($event)"
+      placeholder="e.g. Work, Social, Personal..."
+      class="w-full p-3 rounded-md border border-border bg-surface text-text-main focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+    />
+  </div>
+
+  <div
+    class="flex gap-2 mb-4 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+  >
+    <button
+      class="px-4 py-2 rounded-md border border-transparent text-text-secondary cursor-pointer whitespace-nowrap font-medium transition-all"
+      [class.bg-surface]="mode() === 'scan'"
+      [class.text-primary]="mode() === 'scan'"
+      [class.border-border]="mode() === 'scan'"
+      [class.shadow-sm]="mode() === 'scan'"
+      (click)="changeMode('scan')"
+    >
+      Scan QR
+    </button>
+    <button
+      class="px-4 py-2 rounded-md border border-transparent text-text-secondary cursor-pointer whitespace-nowrap font-medium transition-all"
+      [class.bg-surface]="mode() === 'manual'"
+      [class.text-primary]="mode() === 'manual'"
+      [class.border-border]="mode() === 'manual'"
+      [class.shadow-sm]="mode() === 'manual'"
+      (click)="changeMode('manual')"
+    >
+      Manual
+    </button>
+    <button
+      class="px-4 py-2 rounded-md border border-transparent text-text-secondary cursor-pointer whitespace-nowrap font-medium transition-all"
+      [class.bg-surface]="mode() === 'image'"
+      [class.text-primary]="mode() === 'image'"
+      [class.border-border]="mode() === 'image'"
+      [class.shadow-sm]="mode() === 'image'"
+      (click)="changeMode('image')"
+    >
+      Image
+    </button>
+    <button
+      class="px-4 py-2 rounded-md border border-transparent text-text-secondary cursor-pointer whitespace-nowrap font-medium transition-all"
+      [class.bg-surface]="mode() === 'paste'"
+      [class.text-primary]="mode() === 'paste'"
+      [class.border-border]="mode() === 'paste'"
+      [class.shadow-sm]="mode() === 'paste'"
+      (click)="changeMode('paste')"
+    >
+      Paste
+    </button>
+  </div>
+
+  <div class="min-h-[300px] bg-surface rounded-lg shadow-sm p-4 border border-border">
+    @if (mode() === 'scan') {
+      <div class="flex flex-col items-center text-center">
+        <video
+          #video
+          class="w-full max-w-[400px] h-auto bg-black rounded-md mb-4"
+          muted
+          playsinline
+        ></video>
+        @if (scanError) {
+          <div class="text-danger mb-2">{{ scanError }}</div>
+        }
+        <p class="text-text-secondary">Point camera at QR code</p>
+      </div>
+    }
+
+    @if (mode() === 'manual') {
+      <form (ngSubmit)="addManual()" class="manual-form">
+        <div class="mb-4">
+          <label class="block mb-2 font-medium text-[0.9rem]">Issuer</label>
+          <input
+            [(ngModel)]="manualEntry.issuer"
+            name="issuer"
+            placeholder="e.g. GitHub"
+            class="w-full p-3 rounded-md border border-border bg-surface text-text-main focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+          />
+        </div>
+
+        <div class="mb-4">
+          <label class="block mb-2 font-medium text-[0.9rem]">Label</label>
+          <input
+            [(ngModel)]="manualEntry.label"
+            name="label"
+            placeholder="user@example.com"
+            class="w-full p-3 rounded-md border border-border bg-surface text-text-main focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+          />
+        </div>
+
+        <div class="mb-4">
+          <label class="block mb-2 font-medium text-[0.9rem]">Secret Key (Base32)</label>
+          <input
+            [(ngModel)]="manualEntry.secret"
+            name="secret"
+            placeholder="JBSWY3DPEHPK3PXP"
+            required
+            class="w-full p-3 rounded-md border border-border bg-surface text-text-main focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 font-mono"
+            autocomplete="off"
+          />
+        </div>
+
+        <button
+          type="submit"
+          class="inline-flex items-center justify-center px-4 py-2 rounded-md font-medium cursor-pointer transition-all bg-primary text-white hover:bg-primary-hover border-none w-full disabled:opacity-50 disabled:cursor-not-allowed"
+          [disabled]="!manualEntry.secret"
+        >
+          Add Account
+        </button>
+      </form>
+    }
+
+    @if (mode() === 'image') {
+      <div
+        class="flex flex-col items-center justify-center p-8 text-center border-2 border-dashed rounded-lg transition-all"
+        [class.border-primary]="isDragging()"
+        [class.bg-blue-50]="isDragging()"
+        [class.dark:bg-blue-900]="isDragging()"
+        [class.bg-transparent]="!isDragging()"
+        [class.border-border]="!isDragging()"
+        (dragover)="onDragOver($event)"
+        (dragenter)="onDragOver($event)"
+        (dragleave)="onDragLeave($event)"
+        (drop)="onDrop($event)"
+      >
+        <div class="text-text-secondary mb-4 opacity-50">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="48"
+            height="48"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+            <circle cx="8.5" cy="8.5" r="1.5" />
+            <polyline points="21 15 16 10 5 21" />
+          </svg>
+        </div>
+        <p class="mb-6 text-text-main">
+          Drag and drop a QR code image here,<br />
+          or click to select a file.
+        </p>
+        <label
+          class="inline-flex items-center justify-center px-4 py-2 rounded-md font-medium cursor-pointer transition-all bg-primary text-white hover:bg-primary-hover border-none"
+        >
+          Choose File
+          <input type="file" accept="image/*" (change)="onFileSelected($event)" class="hidden" />
         </label>
-        <input [ngModel]="targetFolder()" (ngModelChange)="targetFolder.set($event)"
-            placeholder="e.g. Work, Social, Personal..."
-            class="w-full p-3 rounded-md border border-border bg-surface text-text-main focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20">
-    </div>
+      </div>
+    }
 
-    <div class="flex gap-2 mb-4 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+    @if (mode() === 'paste') {
+      <div class="flex flex-col">
+        <p class="text-text-secondary mb-4">Paste one or more otpauth:// URLs (one per line).</p>
+        <textarea
+          [(ngModel)]="pasteContent"
+          rows="5"
+          placeholder="otpauth://totp/Example:user?secret=..."
+          class="w-full p-3 rounded-md border border-border bg-surface text-text-main focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 font-mono text-[0.9rem]"
+        ></textarea>
         <button
-            class="px-4 py-2 rounded-md border border-transparent text-text-secondary cursor-pointer whitespace-nowrap font-medium transition-all"
-            [class.bg-surface]="mode() === 'scan'" [class.text-primary]="mode() === 'scan'"
-            [class.border-border]="mode() === 'scan'" [class.shadow-sm]="mode() === 'scan'"
-            (click)="changeMode('scan')">Scan QR</button>
-        <button
-            class="px-4 py-2 rounded-md border border-transparent text-text-secondary cursor-pointer whitespace-nowrap font-medium transition-all"
-            [class.bg-surface]="mode() === 'manual'" [class.text-primary]="mode() === 'manual'"
-            [class.border-border]="mode() === 'manual'" [class.shadow-sm]="mode() === 'manual'"
-            (click)="changeMode('manual')">Manual</button>
-        <button
-            class="px-4 py-2 rounded-md border border-transparent text-text-secondary cursor-pointer whitespace-nowrap font-medium transition-all"
-            [class.bg-surface]="mode() === 'image'" [class.text-primary]="mode() === 'image'"
-            [class.border-border]="mode() === 'image'" [class.shadow-sm]="mode() === 'image'"
-            (click)="changeMode('image')">Image</button>
-        <button
-            class="px-4 py-2 rounded-md border border-transparent text-text-secondary cursor-pointer whitespace-nowrap font-medium transition-all"
-            [class.bg-surface]="mode() === 'paste'" [class.text-primary]="mode() === 'paste'"
-            [class.border-border]="mode() === 'paste'" [class.shadow-sm]="mode() === 'paste'"
-            (click)="changeMode('paste')">Paste</button>
-    </div>
-
-    <div class="min-h-[300px] bg-surface rounded-lg shadow-sm p-4 border border-border">
-        @if (mode() === 'scan') {
-        <div class="flex flex-col items-center text-center">
-            <video #video class="w-full max-w-[400px] h-auto bg-black rounded-md mb-4" muted playsinline></video>
-            @if (scanError) {
-            <div class="text-danger mb-2">{{ scanError }}</div>
-            }
-            <p class="text-text-secondary">Point camera at QR code</p>
-        </div>
-        }
-
-        @if (mode() === 'manual') {
-        <form (ngSubmit)="addManual()" class="manual-form">
-            <div class="mb-4">
-                <label class="block mb-2 font-medium text-[0.9rem]">Issuer</label>
-                <input [(ngModel)]="manualEntry.issuer" name="issuer" placeholder="e.g. GitHub"
-                    class="w-full p-3 rounded-md border border-border bg-surface text-text-main focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20">
-            </div>
-
-            <div class="mb-4">
-                <label class="block mb-2 font-medium text-[0.9rem]">Label</label>
-                <input [(ngModel)]="manualEntry.label" name="label" placeholder="user@example.com"
-                    class="w-full p-3 rounded-md border border-border bg-surface text-text-main focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20">
-            </div>
-
-            <div class="mb-4">
-                <label class="block mb-2 font-medium text-[0.9rem]">Secret Key (Base32)</label>
-                <input [(ngModel)]="manualEntry.secret" name="secret" placeholder="JBSWY3DPEHPK3PXP" required
-                    class="w-full p-3 rounded-md border border-border bg-surface text-text-main focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 font-mono"
-                    autocomplete="off">
-            </div>
-
-            <button type="submit"
-                class="inline-flex items-center justify-center px-4 py-2 rounded-md font-medium cursor-pointer transition-all bg-primary text-white hover:bg-primary-hover border-none w-full disabled:opacity-50 disabled:cursor-not-allowed"
-                [disabled]="!manualEntry.secret">Add Account</button>
-        </form>
-        }
-
-        @if (mode() === 'image') {
-        <div class="flex flex-col items-center justify-center p-8 text-center border-2 border-dashed rounded-lg transition-all"
-            [class.border-primary]="isDragging()" [class.bg-blue-50]="isDragging()"
-            [class.dark:bg-blue-900]="isDragging()" [class.bg-transparent]="!isDragging()"
-            [class.border-border]="!isDragging()" (dragover)="onDragOver($event)" (dragenter)="onDragOver($event)"
-            (dragleave)="onDragLeave($event)" (drop)="onDrop($event)">
-            <div class="text-text-secondary mb-4 opacity-50">
-                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-                    <circle cx="8.5" cy="8.5" r="1.5" />
-                    <polyline points="21 15 16 10 5 21" />
-                </svg>
-            </div>
-            <p class="mb-6 text-text-main">
-                Drag and drop a QR code image here,<br>
-                or click to select a file.
-            </p>
-            <label
-                class="inline-flex items-center justify-center px-4 py-2 rounded-md font-medium cursor-pointer transition-all bg-primary text-white hover:bg-primary-hover border-none">
-                Choose File
-                <input type="file" accept="image/*" (change)="onFileSelected($event)" class="hidden">
-            </label>
-        </div>
-        }
-
-        @if (mode() === 'paste') {
-        <div class="flex flex-col">
-            <p class="text-text-secondary mb-4">Paste one or more otpauth:// URLs (one per line).</p>
-            <textarea [(ngModel)]="pasteContent" rows="5" placeholder="otpauth://totp/Example:user?secret=..."
-                class="w-full p-3 rounded-md border border-border bg-surface text-text-main focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 font-mono text-[0.9rem]"></textarea>
-            <button (click)="processPaste()"
-                class="inline-flex items-center justify-center px-4 py-2 rounded-md font-medium cursor-pointer transition-all bg-primary text-white hover:bg-primary-hover border-none w-full mt-4 disabled:opacity-50 disabled:cursor-not-allowed"
-                [disabled]="!pasteContent">Import
-                URLs</button>
-        </div>
-        }
-    </div>
+          (click)="processPaste()"
+          class="inline-flex items-center justify-center px-4 py-2 rounded-md font-medium cursor-pointer transition-all bg-primary text-white hover:bg-primary-hover border-none w-full mt-4 disabled:opacity-50 disabled:cursor-not-allowed"
+          [disabled]="!pasteContent"
+        >
+          Import URLs
+        </button>
+      </div>
+    }
+  </div>
 </div>

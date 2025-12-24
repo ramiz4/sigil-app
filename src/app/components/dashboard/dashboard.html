@@ -1,94 +1,162 @@
 <div class="max-w-[600px] mx-auto p-4 pb-20">
-    @if (codes().length === 0) {
-    <div class="flex flex-col items-center justify-center text-center py-16 px-4 text-text-secondary">
-        <div class="text-primary mb-6 opacity-80">
-            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-            </svg>
-        </div>
-        <h2 class="text-text-main mb-2">No Accounts yet</h2>
-        <p class="mb-8 max-w-[300px]">Secure your online presence by adding your first 2FA account.</p>
-        <a routerLink="/add"
-            class="inline-flex items-center justify-center px-4 py-2 rounded-md font-medium cursor-pointer transition-all bg-primary text-white hover:bg-primary-hover border-none no-underline">Add
-            Account</a>
-    </div>
-    } @else {
-    <div class="flex flex-col gap-8">
-        @for (group of groupedCodes(); track group.name) {
-        <div>
-            @if (group.name) {
-            <h3
-                class="text-text-secondary text-sm font-semibold uppercase tracking-wider mb-4 px-1 flex items-center gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
-                </svg>
-                {{ group.name }}
-            </h3>
-            }
-            <div class="grid grid-cols-1 gap-4">
-                @for (item of group.items; track item.account.id) {
-                <div class="bg-surface border border-border rounded-lg p-5 relative transition-all cursor-pointer overflow-hidden hover:-translate-y-0.5 hover:shadow-md hover:border-primary active:scale-[0.98]"
-                    (click)="copyCode(item.code)" title="Click to copy">
-                    <div class="flex justify-between items-start mb-4">
-                        <div class="flex flex-col">
-                            <span class="font-semibold text-base text-text-main leading-tight">{{ item.account.issuer ||
-                                'Unknown' }}</span>
-                            <span class="text-[0.85rem] text-text-secondary mt-0.5">{{ item.account.label }}</span>
-                        </div>
-                        <div class="flex items-center gap-1">
-                            <button
-                                class="p-1 opacity-50 hover:opacity-100 hover:text-primary flex items-center justify-center rounded-md transition-all border-none bg-transparent cursor-pointer"
-                                (click)="$event.stopPropagation(); editFolder(item.account)" title="Edit Folder">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round">
-                                    <path
-                                        d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z">
-                                    </path>
-                                    <line x1="12" y1="11" x2="12" y2="17"></line>
-                                    <line x1="9" y1="14" x2="15" y2="14"></line>
-                                </svg>
-                            </button>
-                            <button
-                                class="p-1 opacity-50 hover:opacity-100 hover:text-danger flex items-center justify-center rounded-md transition-all border-none bg-transparent cursor-pointer"
-                                (click)="$event.stopPropagation(); delete(item.account.id)" title="Delete">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round">
-                                    <polyline points="3 6 5 6 21 6" />
-                                    <path
-                                        d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
-
-                    <div
-                        class="font-mono text-[2.5rem] font-medium text-primary tracking-[0.2rem] text-center my-2 mb-6">
-                        {{ item.code }}
-                    </div>
-
-                    <div class="absolute bottom-0 left-0 right-0 h-1 bg-bg">
-                        <div class="h-full bg-primary transition-[width] duration-1000 ease-linear"
-                            [style.width.%]="item.progress * 100" [class.bg-danger]="item.progress < 0.2">
-                        </div>
-                    </div>
-                </div>
-                }
-            </div>
-        </div>
-        }
-    </div>
-    }
-
-    <a routerLink="/add"
-        class="fixed bottom-6 right-6 w-[56px] h-[56px] rounded-full bg-primary text-white flex items-center justify-center shadow-md transition-all z-[100] hover:bg-primary-hover hover:scale-105">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="12" y1="5" x2="12" y2="19" />
-            <line x1="5" y1="12" x2="19" y2="12" />
+  @if (codes().length === 0) {
+    <div
+      class="flex flex-col items-center justify-center text-center py-16 px-4 text-text-secondary"
+    >
+      <div class="text-primary mb-6 opacity-80">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="64"
+          height="64"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
         </svg>
-    </a>
+      </div>
+      <h2 class="text-text-main mb-2">No Accounts yet</h2>
+      <p class="mb-8 max-w-[300px]">
+        Secure your online presence by adding your first 2FA account.
+      </p>
+      <a
+        routerLink="/add"
+        class="inline-flex items-center justify-center px-4 py-2 rounded-md font-medium cursor-pointer transition-all bg-primary text-white hover:bg-primary-hover border-none no-underline"
+        >Add Account</a
+      >
+    </div>
+  } @else {
+    <div class="flex flex-col gap-8">
+      @for (group of groupedCodes(); track group.name) {
+        <div>
+          @if (group.name) {
+            <h3
+              class="text-text-secondary text-sm font-semibold uppercase tracking-wider mb-4 px-1 flex items-center gap-2"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path
+                  d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"
+                ></path>
+              </svg>
+              {{ group.name }}
+            </h3>
+          }
+          <div class="grid grid-cols-1 gap-4">
+            @for (item of group.items; track item.account.id) {
+              <div
+                class="bg-surface border border-border rounded-lg p-5 relative transition-all cursor-pointer overflow-hidden hover:-translate-y-0.5 hover:shadow-md hover:border-primary active:scale-[0.98]"
+                (click)="copyCode(item.code)"
+                title="Click to copy"
+              >
+                <div class="flex justify-between items-start mb-4">
+                  <div class="flex flex-col">
+                    <span class="font-semibold text-base text-text-main leading-tight">{{
+                      item.account.issuer || 'Unknown'
+                    }}</span>
+                    <span class="text-[0.85rem] text-text-secondary mt-0.5">{{
+                      item.account.label
+                    }}</span>
+                  </div>
+                  <div class="flex items-center gap-1">
+                    <button
+                      class="p-1 opacity-50 hover:opacity-100 hover:text-primary flex items-center justify-center rounded-md transition-all border-none bg-transparent cursor-pointer"
+                      (click)="$event.stopPropagation(); editFolder(item.account)"
+                      title="Edit Folder"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      >
+                        <path
+                          d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"
+                        ></path>
+                        <line x1="12" y1="11" x2="12" y2="17"></line>
+                        <line x1="9" y1="14" x2="15" y2="14"></line>
+                      </svg>
+                    </button>
+                    <button
+                      class="p-1 opacity-50 hover:opacity-100 hover:text-danger flex items-center justify-center rounded-md transition-all border-none bg-transparent cursor-pointer"
+                      (click)="$event.stopPropagation(); delete(item.account.id)"
+                      title="Delete"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      >
+                        <polyline points="3 6 5 6 21 6" />
+                        <path
+                          d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
+                        />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+
+                <div
+                  class="font-mono text-[2.5rem] font-medium text-primary tracking-[0.2rem] text-center my-2 mb-6"
+                >
+                  {{ item.code }}
+                </div>
+
+                <div class="absolute bottom-0 left-0 right-0 h-1 bg-bg">
+                  <div
+                    class="h-full bg-primary transition-[width] duration-1000 ease-linear"
+                    [style.width.%]="item.progress * 100"
+                    [class.bg-danger]="item.progress < 0.2"
+                  ></div>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  <a
+    routerLink="/add"
+    class="fixed bottom-6 right-6 w-[56px] h-[56px] rounded-full bg-primary text-white flex items-center justify-center shadow-md transition-all z-[100] hover:bg-primary-hover hover:scale-105"
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <line x1="12" y1="5" x2="12" y2="19" />
+      <line x1="5" y1="12" x2="19" y2="12" />
+    </svg>
+  </a>
 </div>
