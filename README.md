@@ -18,19 +18,18 @@ The name **Sigil** refers to an inscribed symbol believed to have magical power.
 - Node.js (v18+)
 - pnpm
 - Rust (for Tauri desktop build)
-- mkcert (for SSL certificates)
+- Rust (for Tauri desktop build)
 
 ### Web Development
 To run the web application in the browser:
 
 ```bash
 pnpm install
-# Generate SSL certs (requires mkcert installed)
-pnpm setup:ssl
-# Start server with HTTPS
+pnpm install
+# Start server with HTTPS (required for camera access on mobile)
 pnpm dev
 ```
-Open `http://localhost:4200`.
+Open `https://localhost:4200` (Accept the security warning if prompted).
 
 ### Desktop Development (Tauri)
 To run the native desktop application:
@@ -65,3 +64,4 @@ pnpm tauri build
 - [x] Click on the OTP Code should copy the code to clipboard
 - [x] Add account -> Upload image via drag and drop
 - [ ] Add full offline first PWA support
+- [ ] Add prettier and eslint with organize imports
