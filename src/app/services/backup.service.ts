@@ -112,21 +112,11 @@ export class BackupService {
       );
 
       if (!exists) {
-        // Remove ID and created to generate fresh ones on import, or keep?
-        // Let's safe-guard by re-adding manually so storage assigns new ID/time
-        // OR we respect backup if we want full restore.
-        // For MVP, treating as "add account" is safer for ID collisions,
-        // but "restore" implies exact state recovery.
-        // Given StorageService generates ID on add, let's strip ID.
-        const { issuer, label, secret, algorithm, digits, period, type } = acc;
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { id, created, ...rest } = acc as any;
         await this.storage.addAccount({
-          issuer,
-          label,
-          secret,
-          algorithm,
-          digits,
-          period,
-          type: type || 'totp',
+          ...rest,
+          type: rest.type || 'totp',
         });
         restored++;
       } else {

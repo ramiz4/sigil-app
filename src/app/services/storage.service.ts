@@ -40,7 +40,8 @@ export class StorageService {
 
   async getAccounts(): Promise<Account[]> {
     const db = await this.dbPromise;
-    return db.getAllFromIndex('accounts', 'by-created');
+    const accounts = await db.getAll('accounts');
+    return accounts.sort((a, b) => a.created - b.created);
   }
 
   async addAccount(account: Omit<Account, 'id' | 'created'>): Promise<Account> {
