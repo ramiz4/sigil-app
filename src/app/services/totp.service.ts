@@ -118,7 +118,8 @@ export class TotpService {
         digits: parsed.digits,
         period: parsed.period,
       };
-    } catch {
+    } catch (e: any) {
+      if (e.message === 'Only TOTP supported') throw e;
       throw new Error('Invalid OTP URL');
     }
   }

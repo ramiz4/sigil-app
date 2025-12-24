@@ -136,6 +136,23 @@ describe('AddAccount', () => {
     expect(mockEvent.preventDefault).toHaveBeenCalled();
     expect(mockEvent.stopPropagation).toHaveBeenCalled();
     expect(processSpy).toHaveBeenCalledWith(mockFile);
+    expect(processSpy).toHaveBeenCalledWith(mockFile);
     expect(component.isDragging()).toBe(false);
+  });
+
+  it('should show duplicate account alert when account already exists', async () => {
+    const totp = TestBed.inject(TotpService);
+    const dialog = TestBed.inject(DialogService);
+    vi.spyOn(totp, 'addAccount').mockRejectedValue(new Error('Duplicate account'));
+
+    component.manualEntry = {
+      issuer: 'Test',
+      label: 'test@test.com',
+      secret: 'ABC',
+    };
+
+    await component.addManual();
+
+    expect(dialog.alert).toHaveBeenCalledWith('This account already exists');
   });
 });
