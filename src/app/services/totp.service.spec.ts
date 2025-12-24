@@ -17,6 +17,7 @@ describe('TotpService', () => {
             addAccount: () => Promise.resolve({}),
             updateAccount: () => Promise.resolve(),
             deleteAccount: () => Promise.resolve(),
+            deleteAccounts: () => Promise.resolve(),
           },
         },
       ],
@@ -114,6 +115,31 @@ describe('TotpService', () => {
       }),
     ).rejects.toThrow('Duplicate account');
   });
+  it('should delete account and reload', async () => {
+    const storage = TestBed.inject(StorageService);
+    const deleteSpy = vi.spyOn(storage, 'deleteAccount').mockResolvedValue(undefined);
+    const getSpy = vi.spyOn(storage, 'getAccounts').mockResolvedValue([]);
+    storage.getAccounts = getSpy;
+
+    await service.deleteAccount('1');
+
+    expect(deleteSpy).toHaveBeenCalledWith('1');
+    expect(getSpy).toHaveBeenCalled();
+  });
+
+  it('should delete multiple accounts and reload', async () => {
+    const storage = TestBed.inject(StorageService);
+    const deleteAccountsSpy = vi.fn().mockResolvedValue(undefined);
+    vi.spyOn(storage, 'deleteAccounts').mockImplementation(deleteAccountsSpy);
+    const getSpy = vi.fn().mockResolvedValue([]);
+    storage.getAccounts = getSpy;
+
+    await service.deleteAccounts(['1', '2']);
+
+    expect(deleteAccountsSpy).toHaveBeenCalledWith(['1', '2']);
+    expect(getSpy).toHaveBeenCalled();
+  });
+
   it('should reorder accounts', async () => {
     const storage = TestBed.inject(StorageService);
     const accounts = [

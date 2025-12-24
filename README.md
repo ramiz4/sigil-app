@@ -77,4 +77,6 @@ pnpm tauri build
 - [x] Add prettier and eslint with organize imports
 - [x] Add capability to unlock with biometric
 - [x] Add capability to move accounts via drag and drop
+- [x] Add capability to delete accounts
+- [x] Add capability to delete multiple accounts
 - [ ] Add full offline first PWA support

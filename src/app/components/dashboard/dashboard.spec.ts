@@ -20,6 +20,9 @@ class MockTotpService {
   reorderAccount(_id: string, _index: number) {
     // noop
   }
+  deleteAccounts(_ids: string[]) {
+    // noop
+  }
 }
 
 class MockToastService {
@@ -182,5 +185,34 @@ describe('Dashboard', () => {
     await component.editFolder(account as Account);
 
     expect(updateSpy).not.toHaveBeenCalled();
+  });
+
+  it('should toggle selection mode', () => {
+    expect(component.isSelectionMode()).toBe(false);
+    component.toggleSelectionMode();
+    expect(component.isSelectionMode()).toBe(true);
+    component.toggleSelect('1');
+    expect(component.selectedIds().has('1')).toBe(true);
+
+    component.toggleSelectionMode();
+    expect(component.isSelectionMode()).toBe(false);
+    expect(component.selectedIds().size).toBe(0);
+  });
+
+  it('should delete selected accounts', async () => {
+    const mockService = TestBed.inject(TotpService) as unknown as MockTotpService;
+    const dialogService = TestBed.inject(DialogService) as unknown as MockDialogService;
+    const deleteSpy = vi.spyOn(mockService, 'deleteAccounts');
+    dialogService.confirm.mockResolvedValue(true);
+
+    component.toggleSelectionMode();
+    component.toggleSelect('1');
+    component.toggleSelect('2');
+
+    await component.deleteSelected();
+
+    expect(deleteSpy).toHaveBeenCalledWith(['1', '2']);
+    expect(component.selectedIds().size).toBe(0);
+    expect(component.isSelectionMode()).toBe(false);
   });
 });

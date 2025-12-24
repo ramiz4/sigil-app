@@ -78,4 +78,11 @@ export class StorageService {
     const db = await this.dbPromise;
     await db.delete('accounts', id);
   }
+
+  async deleteAccounts(ids: string[]): Promise<void> {
+    const db = await this.dbPromise;
+    const tx = db.transaction('accounts', 'readwrite');
+    const store = tx.objectStore('accounts');
+    await Promise.all([...ids.map((id) => store.delete(id)), tx.done]);
+  }
 }

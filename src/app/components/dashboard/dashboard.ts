@@ -1,6 +1,6 @@
 import { CdkDragDrop, DragDropModule } from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { DialogService } from '../../services/dialog.service';
 import { Account } from '../../services/storage.service';
@@ -18,6 +18,44 @@ export class Dashboard {
   dialog = inject(DialogService);
 
   codes = this.totp.displayCodes;
+  selectedIds = signal<Set<string>>(new Set());
+  isSelectionMode = signal(false);
+
+  toggleSelectionMode() {
+    this.isSelectionMode.update((v: boolean) => !v);
+    if (!this.isSelectionMode()) {
+      this.selectedIds.set(new Set());
+    }
+  }
+
+  toggleSelect(id: string) {
+    this.selectedIds.update((ids: Set<string>) => {
+      const next = new Set(ids);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      return next;
+    });
+  }
+
+  async deleteSelected() {
+    const ids = Array.from(this.selectedIds()) as string[];
+    if (ids.length === 0) return;
+
+    if (
+      await this.dialog.confirm(
+        `Delete ${ids.length} account${ids.length > 1 ? 's' : ''}?`,
+        'Delete Accounts',
+      )
+    ) {
+      await this.totp.deleteAccounts(ids);
+      this.selectedIds.set(new Set());
+      this.isSelectionMode.set(false);
+      this.toast.success('Accounts deleted successfully');
+    }
+  }
 
   groupedCodes = computed(() => {
     const groups: Record<string, TotpDisplay[]> = {};
