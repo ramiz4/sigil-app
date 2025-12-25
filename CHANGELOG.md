@@ -1,3 +1,9 @@
+## [0.4.4](https://github.com/ramiz4/sigil-app/compare/v0.4.3...v0.4.4) (2025-12-25)
+
+### Bug Fixes
+
+- **desktop:** disable dev SSL and add logging permissions ([0f9c937](https://github.com/ramiz4/sigil-app/commit/0f9c937428be2507950d83bb6e2715cb655359be))
+
 ## [0.4.3](https://github.com/ramiz4/sigil-app/compare/v0.4.2...v0.4.3) (2025-12-25)
 
 ### Bug Fixes
