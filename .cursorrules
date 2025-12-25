@@ -21,4 +21,4 @@
 - **Commit Messages**: Use conventional commit messages.
 - **Linting**: Run `pnpm lint` and `pnpm format` before finalizing any implementation.
 - **Changelog**: After completing a task, automatically update `CHANGELOG.md` with a new entry (version, date, summary).
-- **Versioning**: Bump the project version correctly (patch, minor, or major) based on the implementation before finishing.
+- **Versioning**: Bump the project version correctly (patch, minor, or major) in `package.json` using `npm version <type> --no-git-tag-version`. Do NOT create or push git tags locally, as this is handled by GitHub Actions on merge.
