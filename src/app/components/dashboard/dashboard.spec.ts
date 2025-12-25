@@ -125,7 +125,7 @@ describe('Dashboard', () => {
     ]);
     fixture.detectChanges();
 
-    const itemDiv = fixture.debugElement.query(By.css('.bg-surface'));
+    const itemDiv = fixture.debugElement.query(By.css('.grid .bg-surface'));
     expect(itemDiv).toBeTruthy();
 
     itemDiv.triggerEventHandler('click', null);
@@ -214,5 +214,79 @@ describe('Dashboard', () => {
     expect(deleteSpy).toHaveBeenCalledWith(['1', '2']);
     expect(component.selectedIds().size).toBe(0);
     expect(component.isSelectionMode()).toBe(false);
+  });
+
+  it('should filter accounts by search query', () => {
+    const mockService = TestBed.inject(TotpService) as unknown as MockTotpService;
+    mockService.displayCodes.set([
+      { account: { id: '1', issuer: 'Google', label: 'user@gmail.com' } as Account, code: '123' },
+      { account: { id: '2', issuer: 'GitHub', label: 'user@github.com' } as Account, code: '456' },
+      { account: { id: '3', issuer: 'Amazon', label: 'user@amazon.com' } as Account, code: '789' },
+    ]);
+
+    component.searchQuery.set('git');
+    fixture.detectChanges();
+
+    const groups = component.groupedCodes();
+    expect(groups.length).toBe(1);
+    expect(groups[0].items.length).toBe(1);
+    expect(groups[0].items[0].account.issuer).toBe('GitHub');
+  });
+
+  it('should search case-insensitively', () => {
+    const mockService = TestBed.inject(TotpService) as unknown as MockTotpService;
+    mockService.displayCodes.set([
+      { account: { id: '1', issuer: 'Google' } as Account, code: '123' },
+    ]);
+
+    component.searchQuery.set('GOOGLE');
+    fixture.detectChanges();
+
+    const groups = component.groupedCodes();
+    expect(groups.length).toBe(1);
+    expect(groups[0].items.length).toBe(1);
+  });
+
+  it('should search in label as well', () => {
+    const mockService = TestBed.inject(TotpService) as unknown as MockTotpService;
+    mockService.displayCodes.set([
+      { account: { id: '1', issuer: 'Service', label: 'unique-label' } as Account, code: '123' },
+    ]);
+
+    component.searchQuery.set('unique');
+    fixture.detectChanges();
+
+    const groups = component.groupedCodes();
+    expect(groups.length).toBe(1);
+    expect(groups[0].items.length).toBe(1);
+  });
+
+  it('should show empty state if no matches', () => {
+    const mockService = TestBed.inject(TotpService) as unknown as MockTotpService;
+    mockService.displayCodes.set([
+      { account: { id: '1', issuer: 'Google' } as Account, code: '123' },
+    ]);
+
+    component.searchQuery.set('something-else');
+    fixture.detectChanges();
+
+    const groups = component.groupedCodes();
+    expect(groups.length).toBe(0);
+  });
+
+  it('should filter by folder', () => {
+    const mockService = TestBed.inject(TotpService) as unknown as MockTotpService;
+    mockService.displayCodes.set([
+      { account: { id: '1', issuer: 'A', folder: 'Work' } as Account, code: '123' },
+      { account: { id: '2', issuer: 'B', folder: 'Home' } as Account, code: '456' },
+    ]);
+
+    component.selectedFolder.set('Work');
+    fixture.detectChanges();
+
+    const groups = component.groupedCodes();
+    expect(groups.length).toBe(1);
+    expect(groups[0].name).toBe('Work');
+    expect(groups[0].items.length).toBe(1);
   });
 });
