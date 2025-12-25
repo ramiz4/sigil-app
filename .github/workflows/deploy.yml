@@ -14,6 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       tag_created: ${{ steps.create_tag.outputs.created }}
+      release_body: ${{ steps.create_tag.outputs.description }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -41,6 +42,14 @@ jobs:
           VERSION=$(node -p "require('./package.json').version")
           TAG="v$VERSION"
           echo "tag=$TAG" >> $GITHUB_OUTPUT
+
+          # Extract description from CHANGELOG.md
+          # It looks for the row containing the version and takes the 4th column (Description)
+          DESC=$(grep "| \*\*$VERSION\*\*" CHANGELOG.md | cut -d '|' -f 5 | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
+          if [ -z "$DESC" ]; then
+            DESC="New release v$VERSION"
+          fi
+          echo "description=$DESC" >> $GITHUB_OUTPUT
 
           # Check if tag exists
           if git rev-parse "$TAG" >/dev/null 2>&1; then
@@ -136,7 +145,7 @@ jobs:
         with:
           tagName: v__VERSION__
           releaseName: 'Sigil v__VERSION__'
-          releaseBody: 'See the assets to download the desktop version.'
+          releaseBody: ${{ needs.version.outputs.release_body }}
           releaseDraft: false
           prerelease: false
           args: ${{ matrix.platform == 'windows-latest' && '--target x86_64-pc-windows-msvc' || '' }}
