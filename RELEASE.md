@@ -14,15 +14,18 @@ Sigil uses **fully automated versioning and releases**. There are no manual step
     - Creates a Git tag and a GitHub Release.
     - Uploads the desktop binaries for macOS, Linux, and Windows.
 
-## 📝 Commit Conventions
+## 📝 Commit Mapping & Versioning
 
-The version is determined by the commit types:
+The system decides the next version number based on your commit messages, following the [Conventional Commits](https://www.conventionalcommits.org/) standard:
 
-- `fix: ...` -> **Patch** release (e.g., 0.4.2 -> 0.4.3)
-- `feat: ...` -> **Minor** release (e.g., 0.4.2 -> 0.5.0)
-- `feat!:` or `fix!:` (with `!`) -> **Major** release (e.g., 0.4.2 -> 1.0.0)
+| Commit Prefix               | Release Type              | Example                                          |
+| :-------------------------- | :------------------------ | :----------------------------------------------- |
+| `fix:`                      | **Patch** (0.4.2 → 0.4.3) | Bug fixes without new features.                  |
+| `feat:`                     | **Minor** (0.4.2 → 0.5.0) | New features that are backward compatible.       |
+| `feat!:` / `fix!:`          | **Major** (0.4.2 → 1.0.0) | Changes with "Breaking Changes" (incompatible).  |
+| `chore:`, `docs:`, `style:` | **No Release**            | Internal changes with no impact on the end user. |
 
-For more details on commit types, see the [Conventional Commits](https://www.conventionalcommits.org/) website.
+> **Important**: Only commits in the `main` branch are analyzed for releases. If you have multiple commits in a PR, the "highest" type (Major > Minor > Patch) determines the new version.
 
 ## 🛠 Manual Release (Emergency only)
 
