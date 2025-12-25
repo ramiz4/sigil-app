@@ -10,7 +10,7 @@ export interface Account {
   algorithm: string;
   digits: number;
   period: number;
-  type: 'totp';
+  type: 'totp' | 'hotp';
   created: number;
   folder?: string;
   order: number;

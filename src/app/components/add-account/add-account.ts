@@ -123,8 +123,28 @@ export class AddAccount implements OnDestroy, AfterViewInit {
 
   async handleScanResult(text: string) {
     try {
-      const parsed = this.totp.parseUrl(text);
-      await this.add(parsed);
+      const parsedList = this.totp.parseUrl(text);
+      let added = 0;
+      let duplicates = 0;
+
+      for (const parsed of parsedList) {
+        try {
+          await this.addAccount(parsed);
+          added++;
+        } catch (e) {
+          if (e instanceof Error && e.message === 'Duplicate account') {
+            duplicates++;
+          } else {
+            throw e;
+          }
+        }
+      }
+
+      if (added > 0) {
+        this.router.navigate(['/']);
+      } else if (duplicates > 0) {
+        await this.dialog.alert('Account(s) already exist');
+      }
     } catch (e: unknown) {
       console.error(e);
       const message =
@@ -138,7 +158,7 @@ export class AddAccount implements OnDestroy, AfterViewInit {
   async addManual() {
     if (!this.manualEntry.secret) return;
     try {
-      await this.add({
+      await this.addAccount({
         issuer: this.manualEntry.issuer,
         label: this.manualEntry.label,
         secret: this.manualEntry.secret,
@@ -146,6 +166,7 @@ export class AddAccount implements OnDestroy, AfterViewInit {
         digits: 6,
         period: 30,
       });
+      this.router.navigate(['/']);
     } catch (e: unknown) {
       const message =
         e instanceof Error && e.message === 'Duplicate account'
@@ -164,13 +185,20 @@ export class AddAccount implements OnDestroy, AfterViewInit {
     let duplicates = 0;
     for (const line of lines) {
       try {
-        const parsed = this.totp.parseUrl(line);
-        await this.add(parsed);
-        added++;
-      } catch (e: unknown) {
-        if (e instanceof Error && e.message === 'Duplicate account') {
-          duplicates++;
+        const parsedList = this.totp.parseUrl(line);
+        for (const parsed of parsedList) {
+          try {
+            await this.addAccount(parsed);
+            added++;
+          } catch (e) {
+            if (e instanceof Error && e.message === 'Duplicate account') {
+              duplicates++;
+            } else {
+              throw e;
+            }
+          }
         }
+      } catch (e: unknown) {
         console.warn('Failed to parse or add line:', e instanceof Error ? e.message : e);
       }
     }
@@ -182,12 +210,7 @@ export class AddAccount implements OnDestroy, AfterViewInit {
         await this.dialog.alert('No valid URLs found');
       }
     } else {
-      if (duplicates > 0) {
-        // Maybe just navigate if some were added, but could notify
-        this.router.navigate(['/']);
-      } else {
-        this.router.navigate(['/']);
-      }
+      this.router.navigate(['/']);
     }
   }
 
@@ -242,7 +265,7 @@ export class AddAccount implements OnDestroy, AfterViewInit {
     }
   }
 
-  async add(data: Partial<Account>) {
+  async addAccount(data: Partial<Account>) {
     if (!data.secret) throw new Error('No secret');
     await this.totp.addAccount({
       issuer: data.issuer || 'Unknown',
@@ -254,6 +277,5 @@ export class AddAccount implements OnDestroy, AfterViewInit {
       type: 'totp',
       folder: data.folder || this.targetFolder() || undefined,
     });
-    this.router.navigate(['/']);
   }
 }

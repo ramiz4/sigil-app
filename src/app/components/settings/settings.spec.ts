@@ -11,6 +11,10 @@ import { Settings } from './settings';
 class MockBackupService {
   exportBackup = vi.fn();
   importBackup = vi.fn();
+  exportCsv = vi.fn();
+  importCsv = vi.fn();
+  exportPdf = vi.fn();
+  importJson = vi.fn();
 }
 
 class MockDialogService {
@@ -178,7 +182,9 @@ describe('Settings', () => {
     });
 
     it('onFileSelected should import backup when password provided', async () => {
-      const mockFile = new File(['{}'], 'backup.json', { type: 'application/json' });
+      // Mock File.text() or use a format that identifies as encrypted backup
+      const encryptedData = JSON.stringify({ v: 1, salt: 's', data: 'd' });
+      const mockFile = new File([encryptedData], 'backup.json', { type: 'application/json' });
       const event = {
         target: { files: [mockFile], value: 'fake/path' },
       };
@@ -188,6 +194,12 @@ describe('Settings', () => {
         // noop
       });
       backupService.importBackup.mockResolvedValue({ restored: 5, skipped: 2 });
+      backupService.importJson.mockResolvedValue({ restored: 0, skipped: 0 });
+      // Ensure we treat it as encrypted
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      vi.spyOn(component as unknown as Settings, 'isEncryptedBackup' as any).mockResolvedValue(
+        true,
+      );
 
       await component.onFileSelected(event as unknown as Event);
 
@@ -208,6 +220,11 @@ describe('Settings', () => {
       const mockFile = new File([''], 'backup.json');
       const event = { target: { files: [mockFile], value: 'set' } };
       vi.spyOn(window, 'prompt').mockReturnValue(null);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      vi.spyOn(component as unknown as Settings, 'isEncryptedBackup' as any).mockResolvedValue(
+        true,
+      );
+      backupService.importJson.mockResolvedValue({ restored: 0, skipped: 0 });
 
       await component.onFileSelected(event as unknown as Event);
 
@@ -216,7 +233,8 @@ describe('Settings', () => {
     });
 
     it('onFileSelected should handle import error', async () => {
-      const mockFile = new File([''], 'backup.json');
+      const encryptedData = JSON.stringify({ v: 1, salt: 's', data: 'd' });
+      const mockFile = new File([encryptedData], 'backup.json');
       const event = { target: { files: [mockFile], value: 'set' } };
       vi.spyOn(window, 'prompt').mockReturnValue('pass');
       vi.spyOn(window, 'alert').mockImplementation(() => {
@@ -226,10 +244,14 @@ describe('Settings', () => {
         // noop
       });
       backupService.importBackup.mockRejectedValue(new Error('Bad JSON'));
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      vi.spyOn(component as unknown as Settings, 'isEncryptedBackup' as any).mockResolvedValue(
+        true,
+      );
 
       await component.onFileSelected(event as unknown as Event);
 
-      expect(window.alert).toHaveBeenCalledWith(expect.stringContaining('Restore failed'));
+      expect(window.alert).toHaveBeenCalledWith(expect.stringContaining('Import failed'));
       expect(event.target.value).toBe('');
     });
   });
