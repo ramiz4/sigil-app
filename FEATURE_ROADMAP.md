@@ -6,7 +6,7 @@ This document outlines potential new features and enhancements for the Sigil Aut
 
 ## 🚀 High Priority Features
 
-### 1. Search & Filter Accounts 🔍
+### 1. Search & Filter Accounts 🔍 [✅ Implemented]
 
 **Description**: Add search and filtering capabilities to quickly find accounts.
 
@@ -32,7 +32,7 @@ This document outlines potential new features and enhancements for the Sigil Aut
 
 ---
 
-### 2. Account Import/Export Formats 📦
+### 2. Account Import/Export Formats 📦 [✅ Implemented]
 
 **Description**: Support importing from other authenticator apps and exporting in various formats.
 
@@ -899,7 +899,7 @@ This document outlines potential new features and enhancements for the Sigil Aut
 
 ### Must Have (P0)
 
-1. Search & Filter Accounts
+1. Search & Filter Accounts [✅]
 2. Account Editing
 3. Favorites/Pinning
 4. Auto-Backup
@@ -907,7 +907,7 @@ This document outlines potential new features and enhancements for the Sigil Aut
 
 ### Should Have (P1)
 
-6. Account Import/Export Formats
+6. Account Import/Export Formats [✅]
 7. Customizable Themes
 8. Auto-Lock Settings
 9. Secure Clipboard
