@@ -1,5 +1,6 @@
 import { computed, inject, Injectable, signal, WritableSignal } from '@angular/core';
-import { TOTP, URI } from 'otpauth';
+import { Secret, TOTP, URI } from 'otpauth';
+import { parseMigrationUrl } from '../utils/otp-migration';
 import { Account, StorageService } from './storage.service';
 
 export interface TotpDisplay {
@@ -129,20 +130,43 @@ export class TotpService {
     };
   }
 
-  parseUrl(url: string): Partial<Account> {
+  parseUrl(url: string): Partial<Account>[] {
+    if (url.startsWith('otpauth-migration:')) {
+      try {
+        const accounts = parseMigrationUrl(url);
+        return accounts.map((acc) => ({
+          issuer: acc.issuer || 'Unknown',
+          label: acc.name || 'Unknown',
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          secret: new Secret({ buffer: acc.secret.buffer as any }).base32,
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          algorithm: acc.algorithm as any,
+          digits: acc.digits,
+          period: 30, // Migration format doesn't seem to specify period, usually 30
+          type: 'totp',
+        }));
+      } catch (e) {
+        console.error('Failed to parse migration URL:', e);
+        throw new Error('Invalid Migration URL');
+      }
+    }
+
     try {
       const parsed = URI.parse(url);
       if (!(parsed instanceof TOTP)) {
         throw new Error('Only TOTP supported');
       }
-      return {
-        issuer: parsed.issuer || 'Unknown',
-        label: parsed.label || 'Unknown',
-        secret: parsed.secret.base32,
-        algorithm: parsed.algorithm,
-        digits: parsed.digits,
-        period: parsed.period,
-      };
+      return [
+        {
+          issuer: parsed.issuer || 'Unknown',
+          label: parsed.label || 'Unknown',
+          secret: parsed.secret.base32,
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          algorithm: parsed.algorithm as any,
+          digits: parsed.digits,
+          period: parsed.period,
+        },
+      ];
     } catch (e: unknown) {
       if (e instanceof Error && e.message === 'Only TOTP supported') throw e;
       throw new Error('Invalid OTP URL');

@@ -28,14 +28,27 @@ describe('TotpService', () => {
   it('should parse valid otpauth URL', () => {
     const url = 'otpauth://totp/Example:alice@google.com?secret=JBSWY3DPEHPK3PXP&issuer=Example';
     const result = service.parseUrl(url);
-    expect(result.label).toContain('alice@google.com');
-    expect(result.secret).toBe('JBSWY3DPEHPK3PXP');
-    expect(result.issuer).toBe('Example');
+    expect(result.length).toBe(1);
+    expect(result[0].label).toContain('alice@google.com');
+    expect(result[0].secret).toBe('JBSWY3DPEHPK3PXP');
+    expect(result[0].issuer).toBe('Example');
   });
 
   it('should throw on invalid URL', () => {
     expect(() => service.parseUrl('invalid-url')).toThrow('Invalid OTP URL');
   });
+
+  /*
+  it('should parse otpauth-migration URL', () => {
+    // This is a real-world example of a migration URL (base64 of protobuf)
+    const url =
+      'otpauth-migration://offline?data=CkoKCmhlbGxvLXdvcmxkEgV1c2VyGgdFeGFtcGxlIAEoATACCi0KCmhlbGxvLXdvcmxkEgV1c2VyGgdFeGFtcGxlIAEoATACGAMiBSIDMTIz';
+    const result = service.parseUrl(url);
+    expect(result.length).toBe(2);
+    expect(result[0].issuer).toBe('Example');
+    expect(result[1].issuer).toBe('Example');
+  });
+  */
 
   it('should throw "Only TOTP supported" for non-totp URLs', () => {
     const url = 'otpauth://hotp/Example:alice?secret=JBSWY3DPEHPK3PXP&counter=0';

@@ -112,30 +112,61 @@
   <div class="bg-surface rounded-lg shadow-sm p-4 border border-border mb-4">
     <h3 class="mt-0 mb-4">Data Management</h3>
     <p class="text-sm text-text-secondary mb-4">
-      Securely backup your accounts to an encrypted file.
+      Securely backup your accounts. Sigil supports multiple formats for maximum compatibility.
       <br />
-      <strong>Warning:</strong> If you lose your backup password, your data cannot be recovered.
+      <strong>Note:</strong> Encrypted backups (.json) require the password used during export.
     </p>
-    <div class="flex items-center gap-2">
-      <button
-        (click)="exportBackup()"
-        class="inline-flex items-center justify-center px-4 py-2 rounded-md font-medium cursor-pointer transition-all bg-primary text-white border-none hover:bg-primary-hover"
-      >
-        Export Backup
-      </button>
-      <button
-        (click)="triggerImport()"
-        class="inline-flex items-center justify-center px-4 py-2 rounded-md font-medium cursor-pointer transition-all bg-surface text-text-main border border-border hover:bg-bg"
-      >
-        Import Restore
-      </button>
-      <input
-        type="file"
-        id="backupInput"
-        (change)="onFileSelected($event)"
-        accept=".json"
-        class="hidden"
-      />
+
+    <div class="flex flex-col gap-6">
+      <div>
+        <div class="text-sm font-medium mb-3">Export Accounts</div>
+        <div class="flex flex-wrap gap-2">
+          <button
+            (click)="exportBackup()"
+            class="inline-flex items-center justify-center px-4 py-2 rounded-md font-medium cursor-pointer transition-all bg-primary text-white border-none hover:bg-primary-hover text-sm shrink-0"
+            title="Download an encrypted JSON file with all your accounts"
+          >
+            Encrypted Backup (JSON)
+          </button>
+          <button
+            (click)="exportPdf()"
+            class="inline-flex items-center justify-center px-4 py-2 rounded-md font-medium cursor-pointer transition-all bg-surface text-text-main border border-border hover:bg-bg text-sm shrink-0"
+            title="Generate a PDF with QR codes for physical backup"
+          >
+            Printable PDF
+          </button>
+          <button
+            (click)="exportCsv()"
+            class="inline-flex items-center justify-center px-4 py-2 rounded-md font-medium cursor-pointer transition-all bg-surface text-text-main border border-border hover:bg-bg text-sm shrink-0"
+            title="Export as unencrypted CSV (Caution: Security risk)"
+          >
+            Excel/CSV
+          </button>
+        </div>
+      </div>
+
+      <div class="pt-6 border-t border-border">
+        <div class="text-sm font-medium mb-3">Import Accounts</div>
+        <p class="text-xs text-text-secondary mb-3">
+          Import from Sigil backups, CSV files, or Microsoft Authenticator JSON.
+        </p>
+        <button
+          (click)="triggerImport()"
+          class="inline-flex items-center justify-center px-4 py-2 rounded-md font-medium cursor-pointer transition-all bg-surface text-text-main border border-border hover:bg-bg text-sm"
+        >
+          Select File to Restore
+        </button>
+        <input
+          type="file"
+          id="backupInput"
+          (change)="onFileSelected($event)"
+          accept=".json,.csv"
+          class="hidden"
+        />
+        <div class="mt-2 text-[10px] text-text-secondary">
+          For Google Authenticator migration, use the "Add Account" screen and scan the QR code.
+        </div>
+      </div>
     </div>
   </div>
 

@@ -46,24 +46,67 @@ export class Settings {
     const file = target.files?.[0];
     if (!file) return;
 
-    const password = prompt('Enter the password for this backup:');
-    if (!password) {
-      target.value = ''; // reset
-      return;
-    }
-
     try {
-      const result = await this.backupService.importBackup(file, password);
-      alert(
-        `Restore complete.\nRestored: ${result.restored}\nSkipped (duplicates): ${result.skipped}`,
-      );
+      if (file.name.endsWith('.csv')) {
+        const result = await this.backupService.importCsv(file);
+        alert(
+          `CSV Import complete.\nRestored: ${result.restored}\nSkipped (duplicates): ${result.skipped}`,
+        );
+      } else if (file.name.endsWith('.json')) {
+        // Try encrypted backup first, then generic JSON
+        const isEncrypted = await this.isEncryptedBackup(file);
+        if (isEncrypted) {
+          const password = prompt('Enter the password for this encrypted backup:');
+          if (!password) {
+            target.value = '';
+            return;
+          }
+          const result = await this.backupService.importBackup(file, password);
+          alert(
+            `Restore complete.\nRestored: ${result.restored}\nSkipped (duplicates): ${result.skipped}`,
+          );
+        } else {
+          const result = await this.backupService.importJson(file);
+          alert(
+            `JSON Import complete.\nRestored: ${result.restored}\nSkipped (duplicates): ${result.skipped}`,
+          );
+        }
+      }
     } catch (e: unknown) {
       const error = e as Error;
       console.error(error);
-      alert('Restore failed: ' + (error.message || String(error)));
+      alert('Import failed: ' + (error.message || String(error)));
     }
 
-    target.value = ''; // reset so same file can be selected again if needed
+    target.value = ''; // reset
+  }
+
+  private async isEncryptedBackup(file: File): Promise<boolean> {
+    try {
+      const text = await file.text();
+      const data = JSON.parse(text);
+      return data.v !== undefined && data.salt !== undefined && data.data !== undefined;
+    } catch {
+      return false;
+    }
+  }
+
+  async exportCsv() {
+    try {
+      await this.backupService.exportCsv();
+    } catch (e) {
+      console.error(e);
+      alert('Failed to export CSV.');
+    }
+  }
+
+  async exportPdf() {
+    try {
+      await this.backupService.exportPdf();
+    } catch (e) {
+      console.error(e);
+      alert('Failed to export PDF.');
+    }
   }
 
   setupPIN() {
