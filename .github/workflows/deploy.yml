@@ -10,11 +10,15 @@ permissions:
   id-token: write
 
 jobs:
-  version:
+  release:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
     outputs:
-      tag_created: ${{ steps.create_tag.outputs.created }}
-      release_body: ${{ steps.create_tag.outputs.description }}
+      new_release_published: ${{ steps.semantic.outputs.new_release_published }}
+      new_release_version: ${{ steps.semantic.outputs.new_release_version }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -31,38 +35,15 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Configure Git
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+      - name: Semantic Release
+        id: semantic
+        uses: cycjimmy/semantic-release-action@v4
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Create Tag
-        id: create_tag
-        run: |
-          VERSION=$(node -p "require('./package.json').version")
-          TAG="v$VERSION"
-          echo "tag=$TAG" >> $GITHUB_OUTPUT
-
-          # Extract description from CHANGELOG.md
-          # It looks for the row containing the version and takes the 4th column (Description)
-          DESC=$(grep "| \*\*$VERSION\*\*" CHANGELOG.md | cut -d '|' -f 5 | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
-          if [ -z "$DESC" ]; then
-            DESC="New release v$VERSION"
-          fi
-          echo "description=$DESC" >> $GITHUB_OUTPUT
-
-          # Check if tag exists
-          if git rev-parse "$TAG" >/dev/null 2>&1; then
-            echo "Tag $TAG already exists, skipping creation."
-            echo "created=false" >> $GITHUB_OUTPUT
-          else
-            git tag $TAG
-            git push origin $TAG
-            echo "created=true" >> $GITHUB_OUTPUT
-          fi
 
   build-and-deploy:
-    needs: version
+    needs: release
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -101,8 +82,8 @@ jobs:
         uses: actions/deploy-pages@v4
 
   build-tauri:
-    needs: version
-    if: needs.version.outputs.tag_created == 'true'
+    needs: release
+    if: needs.release.outputs.new_release_published == 'true'
     permissions:
       contents: write
     strategy:
@@ -145,7 +126,7 @@ jobs:
         with:
           tagName: v__VERSION__
           releaseName: 'Sigil v__VERSION__'
-          releaseBody: ${{ needs.version.outputs.release_body }}
+          releaseBody: 'Desktop binaries for Sigil v__VERSION__'
           releaseDraft: false
           prerelease: false
           args: ${{ matrix.platform == 'windows-latest' && '--target x86_64-pc-windows-msvc' || '' }}
