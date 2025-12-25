@@ -1,51 +1,17 @@
-# Bugs
+# 🐞 Desktop‑Only Bugs
 
-The following bugs are present only in the desktop version of the app:
+The following issues affect **only the desktop version** of Sigil. All listed bugs have been resolved.
 
-## 1. [Resolved] On OTP card, when user clicks on the folder icon, it should open the alert to Enter folder name for this account.
+## ✅ Resolved Bugs
 
-### Steps to Reproduce
+| #   | Description                                                          | Steps to Reproduce                                                                                                            |
+| --- | -------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| 1️⃣  | **Folder Icon on OTP Card** – Opens an alert to enter a folder name. | 1. Open the app → 2. Click an OTP card → 3. Click the folder icon → 4. Alert appears.                                         |
+| 2️⃣  | **Trash Icon on OTP Card** – Deletes the OTP card.                   | 1. Open the app → 2. Click an OTP card → 3. Click the trash icon → 4. Card is removed.                                        |
+| 3️⃣  | **Image Tab in Add Account** – Supports drag‑and‑drop image upload.  | 1. Open the app → 2. Click _Add Account_ → 3. Switch to _Image_ tab → 4. Drag an image onto the drop zone → 5. Image uploads. |
+| 4️⃣  | **Scan QR Code Tab** – Scans QR codes correctly.                     | 1. Open the app → 2. Click _Add Account_ → 3. Switch to _Scan QR Code_ tab → 4. Scan a QR code → 5. Account is added.         |
+| 5️⃣  | **Remove PIN** – PIN removal works as expected.                      | 1. Open the app → 2. Open _Settings_ → 3. Click _Remove PIN_ → 4. PIN is removed.                                             |
 
-    1. Open the app
-    2. Click on the otp card
-    3. Click on the folder icon
-    4. See the alert to Enter folder name for this account
+---
 
-## 2. [Resolved] On OTP card, when user clicks on the trash icon, it should delete the otp card.
-
-### Steps to Reproduce
-
-    1. Open the app
-    2. Click on the otp card
-    3. Click on the trash icon
-    4. See the otp card deleted
-
-## 3. [Resolved] On the Add Account screen, when user clicks on the Imgae tab, it should be able to upload the image via drag and drop.
-
-### Steps to Reproduce
-
-    1. Open the app
-    2. Click on the add account button
-    3. Click on the Image tab
-    4. Drag and drop the image
-    5. See the image uploaded
-
-## 4. [Resolved] On the Add Account screen, on the Scan QR code tab, it should be able to scan the QR code.
-
-### Steps to Reproduce
-
-    1. Open the app
-    2. Click on the add account button
-    3. Click on the Scan QR code tab
-    4. Scan the QR code
-    5. See the QR code scanned
-    6. See the account added
-
-## 5. [Resolved] Remove PIN doesn't work
-
-### Steps to Reproduce
-
-    1. Open the app
-    2. Click on the settings button
-    3. Click on the Remove PIN button
-    4. See the PIN removed
+_If you encounter any new desktop‑specific issues, please open a GitHub issue._
