@@ -80,3 +80,4 @@ pnpm tauri build
 - [x] Add capability to delete accounts
 - [x] Add capability to delete multiple accounts
 - [x] Add full offline first PWA support
+- [x] Search & Filter Accounts alphabetically and by folder

@@ -20,6 +20,18 @@ export class Dashboard {
   codes = this.totp.displayCodes;
   selectedIds = signal<Set<string>>(new Set());
   isSelectionMode = signal(false);
+  searchQuery = signal('');
+  selectedFolder = signal<string | null>(null);
+
+  folders = computed(() => {
+    const folders = new Set<string>();
+    for (const item of this.codes()) {
+      if (item.account.folder?.trim()) {
+        folders.add(item.account.folder.trim());
+      }
+    }
+    return Array.from(folders).sort();
+  });
 
   toggleSelectionMode() {
     this.isSelectionMode.update((v: boolean) => !v);
@@ -58,10 +70,25 @@ export class Dashboard {
   }
 
   groupedCodes = computed(() => {
+    const query = this.searchQuery().toLowerCase().trim();
+    const folderFilter = this.selectedFolder();
     const groups: Record<string, TotpDisplay[]> = {};
     const ungrouped: TotpDisplay[] = [];
 
-    for (const item of this.codes()) {
+    const filteredCodes = this.codes().filter((item) => {
+      // Folder filter
+      if (folderFilter && item.account.folder !== folderFilter) return false;
+
+      // Search filter
+      if (!query) return true;
+      return (
+        item.account.issuer?.toLowerCase().includes(query) ||
+        item.account.label?.toLowerCase().includes(query) ||
+        item.account.folder?.toLowerCase().includes(query)
+      );
+    });
+
+    for (const item of filteredCodes) {
       const folder = item.account.folder?.trim();
       if (folder) {
         if (!groups[folder]) groups[folder] = [];

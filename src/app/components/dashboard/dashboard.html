@@ -11,6 +11,87 @@
     }
   </div>
 
+  @if (codes().length > 0) {
+    <div class="mb-6 relative group">
+      <div
+        class="absolute left-3.5 top-1/2 -translate-y-1/2 text-text-secondary transition-colors group-focus-within:text-primary pointer-events-none"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <circle cx="11" cy="11" r="8" />
+          <path d="m21 21-4.3-4.3" />
+        </svg>
+      </div>
+      <input
+        type="text"
+        placeholder="Search accounts..."
+        [value]="searchQuery()"
+        (input)="searchQuery.set($any($event.target).value)"
+        class="w-full bg-surface border border-border rounded-xl py-3 pl-11 pr-11 text-text-main placeholder:text-text-secondary focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all shadow-sm group-hover:border-border-hover"
+      />
+      @if (searchQuery()) {
+        <button
+          (click)="searchQuery.set('')"
+          class="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-text-secondary hover:text-text-main hover:bg-bg-secondary rounded-full transition-all border-none bg-transparent cursor-pointer"
+          title="Clear search"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M18 6 6 18" />
+            <path d="m6 6 12 12" />
+          </svg>
+        </button>
+      }
+    </div>
+
+    @if (folders().length > 0) {
+      <div class="flex gap-2 overflow-x-auto pb-6 mb-2 scrollbar-hide">
+        <button
+          (click)="selectedFolder.set(null)"
+          class="px-4 py-1.5 rounded-full text-sm font-medium transition-all border-none cursor-pointer whitespace-nowrap"
+          [class.bg-primary]="selectedFolder() === null"
+          [class.text-white]="selectedFolder() === null"
+          [class.bg-surface-variant]="selectedFolder() !== null"
+          [class.text-text-secondary]="selectedFolder() !== null"
+          [class.hover:bg-bg-secondary]="selectedFolder() !== null"
+        >
+          All
+        </button>
+        @for (folder of folders(); track folder) {
+          <button
+            (click)="selectedFolder.set(folder)"
+            class="px-4 py-1.5 rounded-full text-sm font-medium transition-all border-none cursor-pointer whitespace-nowrap"
+            [class.bg-primary]="selectedFolder() === folder"
+            [class.text-white]="selectedFolder() === folder"
+            [class.bg-surface-variant]="selectedFolder() !== folder"
+            [class.text-text-secondary]="selectedFolder() !== folder"
+            [class.hover:bg-bg-secondary]="selectedFolder() !== folder"
+          >
+            {{ folder }}
+          </button>
+        }
+      </div>
+    }
+  }
+
   @if (codes().length === 0) {
     <div
       class="flex flex-col items-center justify-center text-center py-16 px-4 text-text-secondary"
