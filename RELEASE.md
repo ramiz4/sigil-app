@@ -1,28 +1,35 @@
-# Release Guide for **Sigil** (GitHub)
+# Release Process for **Sigil**
 
-## 1️⃣ Prepare a new version
+Sigil uses **fully automated versioning and releases**. There are no manual steps required to create a new version, tag, or GitHub release.
+
+## 🚀 How it works
+
+1.  **Develop**: Create a feature branch and implement your changes.
+2.  **Commit**: Use [Conventional Commits](https://www.conventionalcommits.org/) (e.g., `feat: ...`, `fix: ...`).
+3.  **Merge**: Create a Pull Request and merge it into the `main` branch.
+4.  **Automate**: Once merged, a GitHub Action triggers `semantic-release`, which:
+    - Analyzes your commits to determine the next version (patch, minor, or major).
+    - Updates `package.json` and `src-tauri/tauri.conf.json`.
+    - Generates/updates the `CHANGELOG.md`.
+    - Creates a Git tag and a GitHub Release.
+    - Uploads the desktop binaries for macOS, Linux, and Windows.
+
+## 📝 Commit Conventions
+
+The version is determined by the commit types:
+
+- `fix: ...` -> **Patch** release (e.g., 0.4.2 -> 0.4.3)
+- `feat: ...` -> **Minor** release (e.g., 0.4.2 -> 0.5.0)
+- `feat!:` or `fix!:` (with `!`) -> **Major** release (e.g., 0.4.2 -> 1.0.0)
+
+For more details on commit types, see the [Conventional Commits](https://www.conventionalcommits.org/) website.
+
+## 🛠 Manual Release (Emergency only)
+
+If you ever need to trigger a release manually for testing (rare), you can run:
 
 ```bash
-# Bump the version (patch, minor, or major)
-npm version patch   # or `npm version minor` / `npm version major`
+pnpm release
 ```
 
-## 2️⃣ What happens automatically
-
-- **GitHub Actions** (`.github/workflows/deploy.yml`) runs on every push to `main`.
-- It reads the new version from `package.json`.
-- If the tag `v<new-version>` does not exist, it creates and pushes it.
-- The `tauri-action` then creates a **GitHub Release** named `Sigil v<new-version>` and uploads the desktop binaries for macOS, Linux, and Windows.
-
-## 3️⃣ Verify the release
-
-- Go to **GitHub → Releases** in the repository.
-- You should see a new release with the version you just pushed and downloadable assets.
-
-## 4️⃣ (Optional) Publish the web build
-
-The same workflow also builds the web app and deploys it to GitHub Pages under `/sigil-app/`.
-
----
-
-> **Note:** No manual steps are required beyond bumping the version and pushing the commit; the CI pipeline handles tagging and releasing for you.
+_Note: This usually requires a `GITHUB_TOKEN` with write permissions._
