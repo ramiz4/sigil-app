@@ -196,7 +196,10 @@ describe('Settings', () => {
       backupService.importBackup.mockResolvedValue({ restored: 5, skipped: 2 });
       backupService.importJson.mockResolvedValue({ restored: 0, skipped: 0 });
       // Ensure we treat it as encrypted
-      vi.spyOn(component as any, 'isEncryptedBackup').mockResolvedValue(true);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      vi.spyOn(component as unknown as Settings, 'isEncryptedBackup' as any).mockResolvedValue(
+        true,
+      );
 
       await component.onFileSelected(event as unknown as Event);
 
@@ -217,7 +220,10 @@ describe('Settings', () => {
       const mockFile = new File([''], 'backup.json');
       const event = { target: { files: [mockFile], value: 'set' } };
       vi.spyOn(window, 'prompt').mockReturnValue(null);
-      vi.spyOn(component as any, 'isEncryptedBackup').mockResolvedValue(true);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      vi.spyOn(component as unknown as Settings, 'isEncryptedBackup' as any).mockResolvedValue(
+        true,
+      );
       backupService.importJson.mockResolvedValue({ restored: 0, skipped: 0 });
 
       await component.onFileSelected(event as unknown as Event);
@@ -238,7 +244,10 @@ describe('Settings', () => {
         // noop
       });
       backupService.importBackup.mockRejectedValue(new Error('Bad JSON'));
-      vi.spyOn(component as any, 'isEncryptedBackup').mockResolvedValue(true);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      vi.spyOn(component as unknown as Settings, 'isEncryptedBackup' as any).mockResolvedValue(
+        true,
+      );
 
       await component.onFileSelected(event as unknown as Event);
 
