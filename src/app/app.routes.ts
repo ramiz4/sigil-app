@@ -1,11 +1,17 @@
 import { Routes } from '@angular/router';
-import { AddAccount } from './components/add-account/add-account';
-import { Dashboard } from './components/dashboard/dashboard';
-import { Settings } from './components/settings/settings';
 
 export const routes: Routes = [
-  { path: '', component: Dashboard },
-  { path: 'add', component: AddAccount },
-  { path: 'settings', component: Settings },
+  {
+    path: '',
+    loadComponent: () => import('./components/dashboard/dashboard').then((m) => m.Dashboard),
+  },
+  {
+    path: 'add',
+    loadComponent: () => import('./components/add-account/add-account').then((m) => m.AddAccount),
+  },
+  {
+    path: 'settings',
+    loadComponent: () => import('./components/settings/settings').then((m) => m.Settings),
+  },
   { path: '**', redirectTo: '' },
 ];
