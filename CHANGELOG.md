@@ -1,3 +1,10 @@
+## [0.4.3](https://github.com/ramiz4/sigil-app/compare/v0.4.2...v0.4.3) (2025-12-25)
+
+### Bug Fixes
+
+- **ci:** use custom release token to bypass branch protection ([70658bb](https://github.com/ramiz4/sigil-app/commit/70658bba111eb8b1896336f163a6ab9f9bd8f217))
+- resolve dependency warnings and peer dependency mismatches ([dbe23c4](https://github.com/ramiz4/sigil-app/commit/dbe23c4abd787293773b5353c403c08585c96b59))
+
 # Changelog
 
 All notable changes to this project will be documented in this file.
