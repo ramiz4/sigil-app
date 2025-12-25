@@ -20,4 +20,8 @@
 - **Micro-Commits**: Make small, frequent, atomic commits throughout the task.
 - **Commit Messages**: Use conventional commit messages.
 - **Linting**: Run `pnpm lint` and `pnpm format` before finalizing any implementation.
-- **Versioning**: Sigil uses `semantic-release` for fully automated versioning and releases. You do NOT need to manually bump the version or update the changelog. Simply ensure your commit messages follow the Conventional Commits standard (e.g., `feat: ...`, `fix: ...`), and the CI will handle the rest on merge to `main`.
+- **Versioning & Changelog**: Sigil uses `semantic-release` for 100% automated versioning and changelog generation. 
+  - **IMPORTANT**: Do NOT manually update `package.json` version or `CHANGELOG.md`.
+  - **IMPORTANT**: Do NOT run `npm version` or create git tags locally.
+  - Your responsibility is solely to use correct **Conventional Commit** prefixes so the automation can determine the next version on merge to `main`.
+
