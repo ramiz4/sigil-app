@@ -20,4 +20,5 @@
 - **Micro-Commits**: Make small, frequent, atomic commits throughout the task.
 - **Commit Messages**: Use conventional commit messages.
 - **Linting**: Run `pnpm lint` and `pnpm format` before finalizing any implementation.
+- **Changelog**: After completing a task, automatically update `CHANGELOG.md` with a new entry (version, date, summary).
 - **Versioning**: Bump the project version correctly (patch, minor, or major) based on the implementation before finishing.
