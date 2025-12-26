@@ -1,3 +1,9 @@
+# [0.5.0](https://github.com/ramiz4/sigil-app/compare/v0.4.4...v0.5.0) (2025-12-26)
+
+### Features
+
+- update application icons ([ee08e51](https://github.com/ramiz4/sigil-app/commit/ee08e51cd6f6ccf01c435d47f56021076102571c))
+
 ## [0.4.4](https://github.com/ramiz4/sigil-app/compare/v0.4.3...v0.4.4) (2025-12-25)
 
 ### Bug Fixes
